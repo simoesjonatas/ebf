@@ -1,0 +1,287 @@
+/* ==========================================================================
+   EBF PIBVP — Componentes
+   Cards, botões, hero, estatísticas, atalhos, formulários, tabelas, badges,
+   alerts e estados vazios. Reutilizados por todos os templates do sistema.
+   ========================================================================== */
+
+/* ---- Cards -------------------------------------------------------------- */
+.card {
+    background: var(--ebf-surface);
+    border: 1px solid var(--ebf-border);
+    border-radius: var(--ebf-radius);
+    box-shadow: var(--ebf-shadow-sm);
+    overflow: hidden;
+    transition: box-shadow var(--ebf-transition), transform var(--ebf-transition);
+}
+.card-header {
+    background: var(--ebf-surface);
+    border-bottom: 1px solid var(--ebf-border);
+    font-weight: 700;
+    color: var(--ebf-ink);
+    padding: var(--ebf-space-4) var(--ebf-space-5);
+}
+/* Cabeçalhos coloridos (login, formulários) ganham gradiente da marca */
+.card-header.bg-primary {
+    background: linear-gradient(100deg, var(--ebf-primary), var(--ebf-primary-dark)) !important;
+    border-bottom: none;
+    color: #fff !important;
+}
+.card-body { padding: var(--ebf-space-5); }
+.card-footer {
+    background: var(--ebf-surface-2);
+    border-top: 1px solid var(--ebf-border);
+}
+.card-title { color: var(--ebf-ink); font-weight: 700; }
+
+/* ---- Botões ------------------------------------------------------------- */
+.btn {
+    --bs-btn-border-radius: var(--ebf-radius-sm);
+    border-radius: var(--ebf-radius-sm);
+    font-weight: 600;
+    letter-spacing: .01em;
+    padding: .55rem 1.05rem;
+    transition: background var(--ebf-transition), border-color var(--ebf-transition),
+        transform var(--ebf-transition), box-shadow var(--ebf-transition);
+}
+.btn:active { transform: translateY(1px); }
+.btn-lg { padding: .75rem 1.4rem; font-size: var(--ebf-fs-lg); }
+.btn-sm { padding: .4rem .8rem; }
+
+.btn-primary {
+    background-color: var(--ebf-primary);
+    border-color: var(--ebf-primary);
+    color: #fff;
+    box-shadow: var(--ebf-shadow-xs);
+}
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--ebf-primary-dark);
+    border-color: var(--ebf-primary-dark);
+    color: #fff;
+}
+.btn-success {
+    background-color: var(--ebf-success);
+    border-color: var(--ebf-success);
+}
+.btn-success:hover { background-color: #197150; border-color: #197150; }
+.btn-danger { background-color: var(--ebf-danger); border-color: var(--ebf-danger); }
+.btn-warning { background-color: var(--ebf-warning); border-color: var(--ebf-warning); color: #fff; }
+
+.btn-accent {
+    background-color: var(--ebf-accent);
+    border-color: var(--ebf-accent);
+    color: #fff;
+}
+.btn-accent:hover,
+.btn-accent:focus {
+    background-color: var(--ebf-accent-dark);
+    border-color: var(--ebf-accent-dark);
+    color: #fff;
+}
+.btn-outline-primary {
+    color: var(--ebf-primary);
+    border-color: var(--ebf-primary);
+}
+.btn-outline-primary:hover {
+    background-color: var(--ebf-primary);
+    border-color: var(--ebf-primary);
+    color: #fff;
+}
+.btn-outline-secondary {
+    color: var(--ebf-ink-soft);
+    border-color: var(--ebf-border-strong);
+}
+.btn-outline-secondary:hover {
+    background-color: var(--ebf-surface-2);
+    border-color: var(--ebf-border-strong);
+    color: var(--ebf-ink);
+}
+
+/* ---- Hero / painel de destaque ----------------------------------------- */
+.hero-panel {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--ebf-primary), var(--ebf-success));
+    color: #fff;
+    border-radius: var(--ebf-radius-lg);
+    padding: var(--ebf-space-6);
+    box-shadow: var(--ebf-shadow);
+}
+.hero-panel::after {
+    content: "";
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(circle, rgba(255, 255, 255, .16), transparent 65%);
+    pointer-events: none;
+}
+.hero-panel h1,
+.hero-panel h2 { color: #fff; }
+.hero-panel p { color: rgba(255, 255, 255, .9); }
+.hero-panel .eyebrow { color: rgba(255, 255, 255, .78); }
+
+/* ---- Eyebrow (rótulo pequeno em caixa alta) ---------------------------- */
+.eyebrow {
+    color: var(--ebf-muted);
+    font-size: var(--ebf-fs-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+/* ---- Cartões de estatística -------------------------------------------- */
+.stat-card {
+    border-radius: var(--ebf-radius);
+}
+.stat-card .card-body { padding: var(--ebf-space-5); }
+.stat-card .stat-value {
+    font-size: clamp(1.8rem, 1.4rem + 1.6vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -.02em;
+}
+
+/* ---- Quick-cards (atalhos do dashboard/home) --------------------------- */
+.quick-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--ebf-space-5);
+    border: 1px solid var(--ebf-border);
+    border-radius: var(--ebf-radius);
+    background: var(--ebf-surface);
+    color: var(--ebf-ink);
+    text-decoration: none;
+    box-shadow: var(--ebf-shadow-xs);
+    transition: transform var(--ebf-transition), box-shadow var(--ebf-transition),
+        border-color var(--ebf-transition);
+}
+.quick-card:hover,
+.quick-card:focus {
+    transform: translateY(-3px);
+    border-color: rgba(229, 111, 79, .55);
+    box-shadow: var(--ebf-shadow);
+    color: var(--ebf-ink);
+    text-decoration: none;
+}
+.quick-card i {
+    color: var(--ebf-accent);
+    font-size: 1.6rem;
+    line-height: 1;
+}
+.quick-card h2 { color: var(--ebf-ink); }
+.quick-card p { font-size: var(--ebf-fs-sm); }
+
+/* ---- Grade de ações ----------------------------------------------------- */
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: var(--ebf-space-3);
+}
+
+/* ---- Badges ------------------------------------------------------------- */
+.badge {
+    font-weight: 600;
+    border-radius: var(--ebf-radius-pill);
+    padding: .35em .7em;
+    letter-spacing: .01em;
+}
+.badge.bg-primary { background-color: var(--ebf-primary) !important; }
+.badge.bg-success { background-color: var(--ebf-success) !important; }
+.badge.bg-warning { background-color: var(--ebf-warning) !important; color: #fff !important; }
+.badge.bg-danger { background-color: var(--ebf-danger) !important; }
+.badge.bg-info { background-color: var(--ebf-info) !important; }
+
+/* ---- Alerts ------------------------------------------------------------- */
+.alert {
+    border: 1px solid transparent;
+    border-radius: var(--ebf-radius-sm);
+    border-left-width: 4px;
+    box-shadow: var(--ebf-shadow-xs);
+    color: var(--ebf-ink);
+}
+.alert-success { background: var(--ebf-success-soft); border-left-color: var(--ebf-success); }
+.alert-danger  { background: var(--ebf-danger-soft);  border-left-color: var(--ebf-danger); }
+.alert-warning { background: var(--ebf-warning-soft); border-left-color: var(--ebf-warning); }
+.alert-info    { background: var(--ebf-info-soft);    border-left-color: var(--ebf-info); }
+/* Mapeia tags do Django messages (debug/error) */
+.alert-debug { background: var(--ebf-surface-2); border-left-color: var(--ebf-muted); }
+.alert-error { background: var(--ebf-danger-soft); border-left-color: var(--ebf-danger); }
+
+/* ---- Tabelas ------------------------------------------------------------ */
+.table {
+    --bs-table-color: var(--ebf-ink);
+    color: var(--ebf-ink);
+}
+.table > thead {
+    background: var(--ebf-surface-2);
+}
+.table > thead th {
+    color: var(--ebf-muted);
+    font-size: var(--ebf-fs-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-bottom: 2px solid var(--ebf-border);
+}
+.table > tbody td { vertical-align: middle; }
+.table-hover > tbody > tr:hover > * {
+    background-color: var(--ebf-primary-soft);
+}
+/* Envolva tabelas largas em .table-responsive para rolagem em telas pequenas */
+.table-responsive {
+    border-radius: var(--ebf-radius-sm);
+    border: 1px solid var(--ebf-border);
+}
+
+/* ---- Estado vazio ------------------------------------------------------- */
+.empty-state {
+    border: 1.5px dashed var(--ebf-border-strong);
+    background: var(--ebf-surface);
+    border-radius: var(--ebf-radius);
+    padding: var(--ebf-space-6);
+    text-align: center;
+    color: var(--ebf-muted);
+}
+.empty-state i { font-size: 2.4rem; color: var(--ebf-border-strong); }
+
+/* ---- QR Code ------------------------------------------------------------ */
+.qr-image {
+    max-width: 220px;
+    width: 100%;
+    height: auto;
+    background: #fff;
+    padding: var(--ebf-space-3);
+    border-radius: var(--ebf-radius-sm);
+    box-shadow: var(--ebf-shadow-xs);
+}
+
+/* ---- Foto/avatar da criança -------------------------------------------- */
+.avatar,
+.foto-crianca {
+    border-radius: var(--ebf-radius);
+    object-fit: cover;
+    box-shadow: var(--ebf-shadow-sm);
+}
+
+/* ---- Dropdown (menu do usuário) ---------------------------------------- */
+.dropdown-menu {
+    border: 1px solid var(--ebf-border);
+    border-radius: var(--ebf-radius);
+    box-shadow: var(--ebf-shadow);
+    background: var(--ebf-surface);
+    padding: var(--ebf-space-2);
+}
+.dropdown-item {
+    border-radius: var(--ebf-radius-sm);
+    color: var(--ebf-ink-soft);
+    font-weight: 500;
+    padding: .5rem .75rem;
+}
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: var(--ebf-primary-soft);
+    color: var(--ebf-primary-dark);
+}

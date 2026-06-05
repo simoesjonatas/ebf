@@ -1,0 +1,196 @@
+/* ==========================================================================
+   EBF PIBVP — Layout
+   Estrutura da página: navbar, footer, shell de conteúdo e mensagens.
+   ========================================================================== */
+
+/* ---- Shell de conteúdo -------------------------------------------------- */
+main.app-main {
+    flex: 1 0 auto;
+    width: 100%;
+    padding: var(--ebf-space-5) var(--ebf-space-4);
+}
+.page-shell {
+    width: 100%;
+    max-width: var(--ebf-shell-max);
+    margin: 0 auto;
+}
+
+/* ---- Navbar ------------------------------------------------------------- */
+.app-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    background: linear-gradient(100deg, var(--ebf-primary-darker), var(--ebf-primary-dark));
+    box-shadow: var(--ebf-shadow-sm);
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+    min-height: var(--ebf-navbar-h);
+    backdrop-filter: saturate(140%) blur(2px);
+}
+.app-navbar .container-fluid {
+    max-width: calc(var(--ebf-shell-max) + 48px);
+    margin: 0 auto;
+}
+.app-navbar .navbar-brand {
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: #fff !important;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+.app-navbar .navbar-brand i {
+    color: var(--ebf-accent);
+    font-size: 1.35rem;
+}
+.app-navbar .nav-link {
+    color: rgba(255, 255, 255, .82) !important;
+    font-weight: 600;
+    font-size: var(--ebf-fs-sm);
+    border-radius: var(--ebf-radius-sm);
+    padding: .45rem .7rem !important;
+    transition: background var(--ebf-transition), color var(--ebf-transition);
+}
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus {
+    color: #fff !important;
+    background: rgba(255, 255, 255, .12);
+}
+.app-navbar .nav-link.active {
+    color: #fff !important;
+    background: rgba(255, 255, 255, .16);
+}
+/* Identificação do usuário logado (não é um link clicável) */
+.app-navbar .navbar-user {
+    color: rgba(255, 255, 255, .72) !important;
+    font-weight: 600;
+    font-size: var(--ebf-fs-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+.app-navbar .navbar-user .badge-role {
+    background: rgba(255, 255, 255, .16);
+    border-radius: var(--ebf-radius-pill);
+    padding: .15rem .5rem;
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+/* ---- Botão hambúrguer animado (vira "X" ao abrir) ---------------------- */
+.app-navbar .navbar-toggler.ebf-burger {
+    width: 46px;
+    height: 42px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: var(--ebf-radius-sm);
+    background: rgba(255, 255, 255, .06);
+    transition: background var(--ebf-transition), border-color var(--ebf-transition);
+}
+.app-navbar .navbar-toggler.ebf-burger:hover {
+    background: rgba(255, 255, 255, .16);
+    border-color: rgba(255, 255, 255, .45);
+}
+.app-navbar .navbar-toggler.ebf-burger:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, .28);
+}
+
+.ebf-burger-box {
+    position: relative;
+    display: block;
+    width: 22px;
+    height: 16px;
+}
+.ebf-burger-bar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: #fff;
+    transition: top var(--ebf-transition), transform var(--ebf-transition),
+        opacity var(--ebf-transition), width var(--ebf-transition);
+}
+.ebf-burger-bar:nth-child(1) { top: 0; }
+.ebf-burger-bar:nth-child(2) { top: 7px; }
+.ebf-burger-bar:nth-child(3) { top: 14px; }
+
+/* Estado aberto: as barras formam um X */
+.navbar-toggler[aria-expanded="true"] .ebf-burger-bar:nth-child(1) {
+    top: 7px;
+    transform: rotate(45deg);
+}
+.navbar-toggler[aria-expanded="true"] .ebf-burger-bar:nth-child(2) {
+    opacity: 0;
+    width: 0;
+    left: 50%;
+}
+.navbar-toggler[aria-expanded="true"] .ebf-burger-bar:nth-child(3) {
+    top: 7px;
+    transform: rotate(-45deg);
+}
+
+/* ---- Animação de entrada dos itens do menu (mobile) -------------------- */
+@media (max-width: 991.98px) {
+    .app-navbar .navbar-collapse.show .nav-item,
+    .app-navbar .navbar-collapse.collapsing .nav-item {
+        animation: ebf-nav-in .32s cubic-bezier(.4, 0, .2, 1) both;
+    }
+    .app-navbar .navbar-collapse.show .nav-item:nth-child(1) { animation-delay: .03s; }
+    .app-navbar .navbar-collapse.show .nav-item:nth-child(2) { animation-delay: .06s; }
+    .app-navbar .navbar-collapse.show .nav-item:nth-child(3) { animation-delay: .09s; }
+    .app-navbar .navbar-collapse.show .nav-item:nth-child(4) { animation-delay: .12s; }
+    .app-navbar .navbar-collapse.show .nav-item:nth-child(5) { animation-delay: .15s; }
+    .app-navbar .navbar-collapse.show .nav-item:nth-child(6) { animation-delay: .18s; }
+    .app-navbar .navbar-collapse.show .nav-item:nth-child(7) { animation-delay: .21s; }
+    .app-navbar .navbar-collapse.show .nav-item:nth-child(n+8) { animation-delay: .24s; }
+}
+@keyframes ebf-nav-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Botão de alternância de tema (claro/escuro) */
+.theme-toggle {
+    border: 1px solid rgba(255, 255, 255, .25);
+    background: rgba(255, 255, 255, .06);
+    color: #fff;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--ebf-radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background var(--ebf-transition);
+}
+.theme-toggle:hover { background: rgba(255, 255, 255, .16); }
+
+/* ---- Mensagens / alerts globais ---------------------------------------- */
+.app-messages {
+    max-width: var(--ebf-shell-max);
+    margin: var(--ebf-space-4) auto 0;
+    padding: 0 var(--ebf-space-4);
+}
+
+/* ---- Footer ------------------------------------------------------------- */
+.app-footer {
+    flex-shrink: 0;
+    margin-top: var(--ebf-space-7);
+    background: var(--ebf-primary-darker);
+    color: rgba(255, 255, 255, .82);
+    padding: var(--ebf-space-5) var(--ebf-space-4);
+}
+.app-footer a {
+    color: rgba(255, 255, 255, .9);
+    text-decoration: underline;
+}
+.app-footer a:hover { color: #fff; }
+.app-footer .footer-inner {
+    max-width: var(--ebf-shell-max);
+    margin: 0 auto;
+    text-align: center;
+}

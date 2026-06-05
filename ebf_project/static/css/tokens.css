@@ -1,0 +1,121 @@
+/* ==========================================================================
+   EBF PIBVP — Design Tokens
+   Variáveis globais: cores, tipografia, espaçamento, raios, sombras.
+
+   Estratégia de tema:
+   - :root              → valores do tema CLARO (padrão).
+   - :root[data-theme="dark"] → valores do tema ESCURO (fonte única).
+   O JavaScript define data-theme no carregamento, detectando a preferência
+   do sistema (prefers-color-scheme) quando o usuário ainda não escolheu.
+   Assim, alternar para "claro" sempre restaura as cores claras, mesmo que
+   o sistema operacional esteja em modo escuro.
+   ========================================================================== */
+
+:root {
+    /* ---- Marca ---------------------------------------------------------- */
+    --ebf-primary: #14697f;
+    --ebf-primary-dark: #0e4d5e;
+    --ebf-primary-darker: #0a3a47;
+    --ebf-primary-soft: #e6f1f4;
+    --ebf-accent: #e56f4f;
+    --ebf-accent-dark: #c9573a;
+    --ebf-accent-soft: #fff1ec;
+
+    /* ---- Estados -------------------------------------------------------- */
+    --ebf-success: #1f8a63;
+    --ebf-success-soft: #e4f5ee;
+    --ebf-warning: #d98a13;
+    --ebf-warning-soft: #fdf2dd;
+    --ebf-danger: #d24b4b;
+    --ebf-danger-soft: #fbe9e9;
+    --ebf-info: #2b7bb0;
+    --ebf-info-soft: #e6f1f8;
+
+    /* ---- Superfícies / Texto ------------------------------------------- */
+    --ebf-bg: #f4f7f8;
+    --ebf-bg-tint: rgba(20, 105, 127, .06);
+    --ebf-surface: #ffffff;
+    --ebf-surface-2: #f8fafb;
+    --ebf-ink: #16232b;
+    --ebf-ink-soft: #3c4a54;
+    --ebf-muted: #66747f;
+    --ebf-border: #e1e8ec;
+    --ebf-border-strong: #cdd8de;
+
+    /* ---- Sombras (claro) ----------------------------------------------- */
+    --ebf-shadow-xs: 0 1px 2px rgba(16, 35, 43, .06);
+    --ebf-shadow-sm: 0 2px 8px rgba(16, 35, 43, .07);
+    --ebf-shadow: 0 8px 24px rgba(16, 35, 43, .09);
+    --ebf-shadow-lg: 0 18px 44px rgba(16, 35, 43, .14);
+    --ebf-shadow-focus: 0 0 0 3px rgba(20, 105, 127, .28);
+
+    /* ---- Tipografia ----------------------------------------------------- */
+    --ebf-font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    --ebf-fs-xs: .78rem;
+    --ebf-fs-sm: .875rem;
+    --ebf-fs-base: 1rem;
+    --ebf-fs-lg: 1.125rem;
+    --ebf-lh-tight: 1.2;
+    --ebf-lh-base: 1.55;
+
+    /* ---- Espaçamento (escala 4px) -------------------------------------- */
+    --ebf-space-1: .25rem;
+    --ebf-space-2: .5rem;
+    --ebf-space-3: .75rem;
+    --ebf-space-4: 1rem;
+    --ebf-space-5: 1.5rem;
+    --ebf-space-6: 2rem;
+    --ebf-space-7: 3rem;
+
+    /* ---- Raios ---------------------------------------------------------- */
+    --ebf-radius-sm: 8px;
+    --ebf-radius: 12px;
+    --ebf-radius-lg: 18px;
+    --ebf-radius-pill: 999px;
+
+    /* ---- Transições / Layout ------------------------------------------- */
+    --ebf-transition: .18s cubic-bezier(.4, 0, .2, 1);
+    --ebf-shell-max: 1200px;
+    --ebf-navbar-h: 64px;
+
+    color-scheme: light;
+}
+
+/* ---- Tema escuro (fonte única) ----------------------------------------- */
+:root[data-theme="dark"] {
+    --ebf-primary: #2a93ac;
+    --ebf-primary-dark: #1f7689;
+    --ebf-primary-darker: #19606f;
+    --ebf-primary-soft: #16323a;
+    --ebf-accent: #f08163;
+    --ebf-accent-dark: #d96a4d;
+    --ebf-accent-soft: #3a241d;
+
+    --ebf-success: #3fb083;
+    --ebf-success-soft: #163029;
+    --ebf-warning: #e0a23c;
+    --ebf-warning-soft: #332912;
+    --ebf-danger: #e26d6d;
+    --ebf-danger-soft: #361f1f;
+    --ebf-info: #57a3d4;
+    --ebf-info-soft: #162933;
+
+    --ebf-bg: #0e171c;
+    --ebf-bg-tint: rgba(42, 147, 172, .08);
+    --ebf-surface: #16232b;
+    --ebf-surface-2: #1c2b34;
+    --ebf-ink: #e8eef1;
+    --ebf-ink-soft: #c2cdd3;
+    --ebf-muted: #8a99a2;
+    --ebf-border: #26363f;
+    --ebf-border-strong: #33464f;
+
+    --ebf-shadow-xs: 0 1px 2px rgba(0, 0, 0, .4);
+    --ebf-shadow-sm: 0 2px 8px rgba(0, 0, 0, .45);
+    --ebf-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+    --ebf-shadow-lg: 0 18px 44px rgba(0, 0, 0, .6);
+    --ebf-shadow-focus: 0 0 0 3px rgba(42, 147, 172, .4);
+
+    color-scheme: dark;
+}

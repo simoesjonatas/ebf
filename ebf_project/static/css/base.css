@@ -1,0 +1,145 @@
+/* ==========================================================================
+   EBF PIBVP — Base
+   Reset moderno, tipografia, elementos de formulário e acessibilidade.
+   Carregado depois do Bootstrap para sobrescrever com a identidade do EBF.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--ebf-font-sans);
+    font-size: var(--ebf-fs-base);
+    line-height: var(--ebf-lh-base);
+    color: var(--ebf-ink);
+    background:
+        radial-gradient(1200px 480px at 50% -120px, var(--ebf-bg-tint), transparent 70%),
+        var(--ebf-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* ---- Tipografia --------------------------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--ebf-ink);
+    font-weight: 700;
+    line-height: var(--ebf-lh-tight);
+    letter-spacing: -.01em;
+}
+
+p {
+    color: var(--ebf-ink-soft);
+}
+
+a {
+    color: var(--ebf-primary);
+    text-decoration: none;
+    transition: color var(--ebf-transition);
+}
+a:hover {
+    color: var(--ebf-primary-dark);
+    text-decoration: underline;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--ebf-border);
+    opacity: 1;
+}
+
+/* Texto auxiliar — alinha utilitários do Bootstrap ao tema */
+.text-muted { color: var(--ebf-muted) !important; }
+small, .small { font-size: var(--ebf-fs-sm); }
+
+/* ---- Foco acessível ----------------------------------------------------- */
+:focus-visible {
+    outline: 2px solid var(--ebf-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+    outline: none;
+    box-shadow: var(--ebf-shadow-focus);
+}
+
+/* Link "pular para conteúdo" (acessibilidade por teclado) */
+.skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    z-index: 2000;
+    padding: var(--ebf-space-2) var(--ebf-space-4);
+    background: var(--ebf-primary);
+    color: #fff;
+    border-radius: 0 0 var(--ebf-radius-sm) 0;
+    font-weight: 600;
+}
+.skip-link:focus {
+    left: 0;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* ---- Formulários -------------------------------------------------------- */
+.form-control,
+.form-select {
+    border: 1px solid var(--ebf-border-strong);
+    border-radius: var(--ebf-radius-sm);
+    background: var(--ebf-surface);
+    color: var(--ebf-ink);
+    padding: .6rem .85rem;
+    transition: border-color var(--ebf-transition), box-shadow var(--ebf-transition);
+}
+.form-control::placeholder { color: var(--ebf-muted); opacity: .8; }
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--ebf-primary);
+    box-shadow: var(--ebf-shadow-focus);
+    background: var(--ebf-surface);
+    color: var(--ebf-ink);
+}
+.form-label {
+    font-weight: 600;
+    font-size: var(--ebf-fs-sm);
+    color: var(--ebf-ink-soft);
+    margin-bottom: var(--ebf-space-1);
+}
+.form-text { color: var(--ebf-muted); }
+.input-group-text {
+    background: var(--ebf-surface-2);
+    border-color: var(--ebf-border-strong);
+    color: var(--ebf-muted);
+}
+
+/* ---- Imagens responsivas por padrão ------------------------------------ */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ---- Acessibilidade: respeitar redução de movimento -------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}

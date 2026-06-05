@@ -1,0 +1,71 @@
+/* ==========================================================================
+   EBF PIBVP — Responsivo
+   Ajustes finos por faixa de dispositivo. O Bootstrap já cuida da grade;
+   aqui refinamos espaçamento, tipografia e ergonomia de toque.
+   Breakpoints: mobile (<576), tablet (576–991), desktop (>=992).
+   ========================================================================== */
+
+/* ---- Mobile (até 575px) ------------------------------------------------- */
+@media (max-width: 575.98px) {
+    main.app-main {
+        padding: var(--ebf-space-4) var(--ebf-space-3);
+    }
+    .hero-panel {
+        padding: var(--ebf-space-5) var(--ebf-space-4);
+        border-radius: var(--ebf-radius);
+    }
+    .card-body { padding: var(--ebf-space-4); }
+    .card-header { padding: var(--ebf-space-3) var(--ebf-space-4); }
+    .quick-card { padding: var(--ebf-space-4); }
+
+    /* Alvos de toque maiores no celular */
+    .btn { padding: .65rem 1.1rem; }
+    .app-navbar .nav-link { padding: .65rem .7rem !important; }
+
+    /* Botões de ação ocupam a largura toda para facilitar o toque */
+    .btn-block-mobile { width: 100%; }
+
+    /* Reduz títulos grandes para caber na tela */
+    h1, .h1 { font-size: 1.6rem; }
+    h2, .h2 { font-size: 1.35rem; }
+}
+
+/* ---- Navbar mobile: painel deslizante ---------------------------------- */
+@media (max-width: 991.98px) {
+    .app-navbar .navbar-collapse {
+        margin-top: var(--ebf-space-3);
+        padding: var(--ebf-space-2);
+        background: rgba(255, 255, 255, .06);
+        border: 1px solid rgba(255, 255, 255, .1);
+        border-radius: var(--ebf-radius);
+    }
+    .app-navbar .navbar-nav { gap: 2px; }
+    .app-navbar .nav-link { border-radius: var(--ebf-radius-sm); }
+    .app-navbar .navbar-user {
+        padding: var(--ebf-space-2) var(--ebf-space-3);
+    }
+}
+
+/* ---- Tablet (576px a 991px) -------------------------------------------- */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .page-shell { padding: 0 var(--ebf-space-2); }
+    /* Em tablets, a grade de estatísticas fica em 2 colunas confortáveis */
+    .action-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+}
+
+/* ---- Desktop (992px+) --------------------------------------------------- */
+@media (min-width: 992px) {
+    main.app-main { padding: var(--ebf-space-6) var(--ebf-space-5); }
+}
+
+/* ---- Telas largas (1400px+) -------------------------------------------- */
+@media (min-width: 1400px) {
+    :root { --ebf-shell-max: 1280px; }
+}
+
+/* ---- Orientação paisagem em celulares (scanners de QR) ----------------- */
+@media (max-width: 991.98px) and (orientation: landscape) {
+    .qr-image { max-width: 180px; }
+}

@@ -1,0 +1,52 @@
+/* ==========================================================================
+   EBF PIBVP — Impressão
+   Otimizado para etiquetas e crachás com QR Code. Remove a navegação e
+   maximiza a área útil da folha.
+   ========================================================================== */
+
+@media print {
+    :root { --ebf-shell-max: 100%; }
+
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .app-navbar,
+    .app-footer,
+    .app-messages,
+    .alert,
+    .no-print,
+    .theme-toggle,
+    .btn {
+        display: none !important;
+    }
+
+    main.app-main {
+        padding: 0 !important;
+    }
+    .page-shell { max-width: 100% !important; }
+
+    .card,
+    .quick-card,
+    .stat-card {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        break-inside: avoid;
+    }
+
+    .qr-image {
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-width: 200px;
+    }
+
+    a { color: #000 !important; text-decoration: none !important; }
+
+    /* Evita quebrar etiquetas no meio da página */
+    .etiqueta,
+    .label-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
