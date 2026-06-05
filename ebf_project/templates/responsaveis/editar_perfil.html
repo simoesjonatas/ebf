@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Editar dados do responsável - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-person-lines-fill"></i> Dados do responsável</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Nome completo</label>
+                            {{ form.nome_completo }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Telefone</label>
+                            {{ form.telefone }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Documento</label>
+                        {{ form.documento }}
+                    </div>
+                    <div class="form-check mb-4">
+                        {{ form.autorizacao_imagem }}
+                        <label class="form-check-label">Autorizo uso de imagem nas atividades da EBF</label>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="submit"><i class="bi bi-check-circle"></i> Salvar</button>
+                        <a class="btn btn-outline-secondary" href="{% url 'responsaveis:dashboard' %}">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

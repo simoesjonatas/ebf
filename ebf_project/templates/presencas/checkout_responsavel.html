@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Check-out por responsável - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-info text-white"><i class="bi bi-box-arrow-right"></i> Retirada por {{ responsavel.nome_completo }}</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <p class="text-muted">Selecione as crianças que serão retiradas agora.</p>
+                    <div class="list-group mb-4">
+                        {% for choice in form.criancas %}
+                            <label class="list-group-item">{{ choice.tag }} {{ choice.choice_label }}</label>
+                        {% empty %}
+                            <div class="empty-state">Nenhuma criança presente disponível para retirada.</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Observação</label>
+                        {{ form.observacao }}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-info text-white" type="submit"><i class="bi bi-check-circle"></i> Confirmar retirada</button>
+                        <a class="btn btn-outline-secondary" href="{% url 'presencas:leitura_qr_checkout' %}">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

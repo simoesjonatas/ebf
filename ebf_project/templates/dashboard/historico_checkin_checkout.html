@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico de check-in/out - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Histórico de check-in e check-out</h1>
+    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">Voltar</a>
+</div>
+<form class="card card-body mb-4" method="get">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Data</label>
+            <input class="form-control" type="date" name="data" value="{{ data_filtro|date:'Y-m-d' }}">
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Filtrar</button>
+        </div>
+    </div>
+</form>
+<div class="card">
+    <div class="card-body table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>Criança</th><th>Status</th><th>Check-in</th><th>Recepção</th><th>Check-out</th><th>Responsável retirada</th></tr></thead>
+            <tbody>
+                {% for presenca in presencas %}
+                <tr>
+                    <td>{{ presenca.crianca.nome_completo }}</td>
+                    <td>{{ presenca.get_status_display }}</td>
+                    <td>{{ presenca.horario_checkin|date:"H:i"|default:"-" }}</td>
+                    <td>{% if presenca.usuario_checkin %}{{ presenca.usuario_checkin.get_full_name|default:presenca.usuario_checkin.username }}{% else %}-{% endif %}</td>
+                    <td>{{ presenca.horario_checkout|date:"H:i"|default:"-" }}</td>
+                    <td>{% if presenca.responsavel_checkout %}{{ presenca.responsavel_checkout.nome_completo }}{% else %}-{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">Nenhum histórico encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

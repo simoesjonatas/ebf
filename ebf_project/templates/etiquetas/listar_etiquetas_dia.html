@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Etiquetas do dia - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <div class="eyebrow">Recepção</div>
+        <h1 class="h3 mb-0">Etiquetas de {{ data|date:"d/m/Y" }}</h1>
+    </div>
+    <a href="{% url 'presencas:leitura_qr_checkin' %}" class="btn btn-primary"><i class="bi bi-qr-code-scan"></i> Novo check-in</a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+            <div>
+                <strong>
+                    {% if paginator.count == 1 %}1 etiqueta encontrada{% else %}{{ paginator.count }} etiquetas encontradas{% endif %}
+                </strong>
+                {% if paginator.num_pages > 1 %}<span class="text-muted"> · página {{ page_obj.number }} de {{ paginator.num_pages }}</span>{% endif %}
+            </div>
+            <div class="btn-group flex-wrap" role="group" aria-label="Filtro de impressão">
+                <a class="btn btn-sm {% if status == 'todas' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?status=todas">
+                    Todas <span class="badge {% if status == 'todas' %}text-bg-light{% else %}text-bg-primary{% endif %}">{{ total_etiquetas }}</span>
+                </a>
+                <a class="btn btn-sm {% if status == 'pendentes' %}btn-warning{% else %}btn-outline-warning{% endif %}" href="?status=pendentes">
+                    Pendentes <span class="badge {% if status == 'pendentes' %}text-bg-light{% else %}text-bg-warning{% endif %}">{{ total_pendentes }}</span>
+                </a>
+                <a class="btn btn-sm {% if status == 'impressas' %}btn-success{% else %}btn-outline-success{% endif %}" href="?status=impressas">
+                    Impressas <span class="badge {% if status == 'impressas' %}text-bg-light{% else %}text-bg-success{% endif %}">{{ total_impressas }}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Criança</th>
+                        <th>Turma</th>
+                        <th>Gerada em</th>
+                        <th>Status</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for etiqueta in etiquetas %}
+                    <tr>
+                        <td><strong>{{ etiqueta.crianca.nome_completo }}</strong><br><small class="text-muted">{{ etiqueta.crianca.codigo_interno }}</small></td>
+                        <td>{% if etiqueta.crianca.turma %}{{ etiqueta.crianca.turma.nome }}{% else %}-{% endif %}</td>
+                        <td>{{ etiqueta.data_geracao|date:"H:i" }}</td>
+                        <td>{% if etiqueta.impressa %}<span class="badge text-bg-success">Impressa</span>{% else %}<span class="badge text-bg-warning">Pendente</span>{% endif %}</td>
+                        <td class="text-end">
+                            <a href="{% url 'etiquetas:gerar_etiqueta' etiqueta.presenca.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-printer"></i> Abrir</a>
+                            {% if not etiqueta.impressa %}
+                            <a href="{% url 'etiquetas:marcar_impressa' etiqueta.id %}?next={{ request.get_full_path|urlencode }}" class="btn btn-sm btn-outline-success"><i class="bi bi-check2"></i> Impressa</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            {% if status == 'pendentes' %}
+                                Nenhuma etiqueta pendente hoje.
+                            {% elif status == 'impressas' %}
+                                Nenhuma etiqueta impressa hoje.
+                            {% else %}
+                                Nenhuma etiqueta gerada hoje.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if page_obj.has_other_pages %}
+    <div class="card-footer bg-white">
+        <nav aria-label="Paginação de etiquetas">
+            <ul class="pagination justify-content-center mb-0">
+                <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                    {% if page_obj.has_previous %}
+                        <a class="page-link" href="?status={{ status }}&page={{ page_obj.previous_page_number }}" aria-label="Página anterior">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    {% else %}
+                        <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+                    {% endif %}
+                </li>
+
+                {% for num in paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                    {% elif num == 1 or num == paginator.num_pages or num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                        <li class="page-item"><a class="page-link" href="?status={{ status }}&page={{ num }}">{{ num }}</a></li>
+                    {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+
+                <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                    {% if page_obj.has_next %}
+                        <a class="page-link" href="?status={{ status }}&page={{ page_obj.next_page_number }}" aria-label="Próxima página">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    {% else %}
+                        <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

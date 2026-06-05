@@ -1,0 +1,5 @@
+Django==4.2.30
+python-decouple==3.8
+Pillow==10.1.0
+qrcode==7.4.2
+reportlab==4.0.7

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Minhas Crianças - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-people"></i> Minhas Crianças</h2>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'responsaveis:gerar_qr_checkin_lote' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-qr-code"></i> QR check-in
+                </a>
+                <a href="{% url 'responsaveis:gerar_qr_checkout_lote' %}" class="btn btn-outline-info">
+                    <i class="bi bi-qr-code-scan"></i> QR check-out
+                </a>
+                <a href="{% url 'criancas:criar' %}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Cadastrar Criança
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if criancas %}
+    <div class="row">
+        {% for crianca in criancas %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex gap-3">
+                        <div style="width: 82px; flex: 0 0 82px;">
+                            {% if crianca.foto %}
+                                <img src="{{ crianca.foto.url }}" alt="Foto de {{ crianca.nome_completo }}" class="rounded border w-100" style="aspect-ratio: 3 / 4; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded border bg-light d-grid text-muted text-center" style="aspect-ratio: 3 / 4; place-items: center; font-size: .8rem;">Sem foto</div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="card-title">{{ crianca.nome_completo }}</h5>
+                            <p class="card-text">
+                                <strong>Código:</strong> {{ crianca.codigo_interno }}<br>
+                                <strong>Idade:</strong> {{ crianca.get_idade }} anos<br>
+                                <strong>Turma:</strong> {% if crianca.turma %}{{ crianca.turma.nome }}{% else %}Não atribuída{% endif %}
+                            </p>
+                            <a href="{% url 'responsaveis:detalhe_crianca' crianca.id %}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-eye"></i> Ver Detalhes
+                            </a>
+                            <a href="{% url 'criancas:editar' crianca.id %}" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Você ainda não cadastrou nenhuma criança.
+        <a href="{% url 'criancas:criar' %}" class="alert-link">Cadastre a primeira criança</a>
+    </div>
+{% endif %}
+{% endblock %}

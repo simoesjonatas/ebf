@@ -1,0 +1,97 @@
+{% extends "presencas/leitura_qr_checkin.html" %}
+
+{% block title %}Check-out - Leitura QR Code{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0"><i class="bi bi-camera"></i> Leitura de QR Code - Check-out</h5>
+            </div>
+            <div class="card-body">
+                <div class="scanner-container">
+                    <video id="video" playsinline></video>
+                </div>
+                <div class="input-group mt-3">
+                    <input type="text" id="qr-code" class="form-control" placeholder="Escaneie o QR Code temporário ou do responsável">
+                    <button class="btn btn-info text-white" onclick="processar()">Processar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+const video = document.getElementById('video');
+const qrInput = document.getElementById('qr-code');
+
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(stream => {
+            video.srcObject = stream;
+            video.play();
+            detectarQR();
+        })
+        .catch(() => {});
+}
+
+function detectarQR() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    setInterval(() => {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, canvas.width, canvas.height);
+            if (code) {
+                const token = code.data.trim();
+                if (token) {
+                    qrInput.value = token;
+                    processar();
+                }
+            }
+        }
+    }, 250);
+}
+
+function processar() {
+    const token = qrInput.value.trim();
+    if (!token) {
+        alert('Escaneie um QR Code ou digite o código');
+        return;
+    }
+    fetch('{% url "presencas:processar_qr_checkout" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: 'token=' + encodeURIComponent(token)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.sucesso) {
+            if (data.tipo === 'presenca') {
+                window.location.href = '/presencas/checkout/presenca/' + data.presenca_id + '/';
+            } else if (data.tipo === 'checkout_lote') {
+                window.location.href = '/presencas/checkout/lote/' + data.lote_id + '/';
+            } else {
+                window.location.href = '/presencas/checkout/responsavel/' + data.responsavel_id + '/';
+            }
+        } else {
+            alert('Erro: ' + data.mensagem);
+            qrInput.value = '';
+            qrInput.focus();
+        }
+    });
+}
+
+qrInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') processar();
+});
+</script>
+{% endblock %}

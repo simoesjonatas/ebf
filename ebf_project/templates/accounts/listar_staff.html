@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Usuários staff - EBF PIBVP{% endblock %}
+
+{% block extra_css %}
+<style>
+    .staff-role-form {
+        min-width: 260px;
+    }
+
+    .staff-mobile-list {
+        display: none;
+    }
+
+    .staff-mobile-item {
+        border-bottom: 1px solid var(--ebf-border);
+        padding: 1rem;
+    }
+
+    .staff-mobile-item:last-child {
+        border-bottom: 0;
+    }
+
+    @media (max-width: 767.98px) {
+        .staff-desktop-table {
+            display: none;
+        }
+
+        .staff-mobile-list {
+            display: block;
+        }
+
+        .staff-role-form {
+            min-width: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+    <div>
+        <div class="eyebrow">Coordenação</div>
+        <h1 class="h3 mb-1">Usuários staff</h1>
+        <p class="text-muted mb-0">Visualize recepção, check-in, checkout, professores, coordenação e administradores cadastrados.</p>
+    </div>
+    <div class="align-self-md-end">
+        <a class="btn btn-accent" href="{% url 'accounts:staff_register' %}">
+            <i class="bi bi-person-plus"></i> Cadastrar staff
+        </a>
+    </div>
+</div>
+
+<form method="get" class="card card-body mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-9">
+            <label class="form-label" for="q">Buscar staff</label>
+            <input class="form-control form-control-lg" id="q" name="q" value="{{ termo }}" placeholder="Nome, e-mail, função, telefone ou documento">
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary btn-lg w-100" type="submit"><i class="bi bi-search"></i> Pesquisar</button>
+        </div>
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-header d-flex flex-column flex-md-row justify-content-between gap-2">
+        <span>Staff cadastrados</span>
+        <small class="text-muted">
+            {% if paginator.count == 1 %}1 usuário encontrado{% else %}{{ paginator.count }} usuários encontrados{% endif %}
+            {% if paginator.num_pages > 1 %} · página {{ page_obj.number }} de {{ paginator.num_pages }}{% endif %}
+        </small>
+    </div>
+    <div class="card-body table-responsive staff-desktop-table">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Usuário</th>
+                    <th>Função</th>
+                    <th>Também responsável</th>
+                    <th>Status</th>
+                    <th>Último acesso</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for perfil in perfis %}
+                <tr>
+                    <td>
+                        <strong>{{ perfil.usuario.get_full_name|default:perfil.usuario.username }}</strong><br>
+                        <small class="text-muted">{{ perfil.usuario.email|default:"Sem e-mail" }}</small>
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'accounts:staff_role_update' perfil.id %}{% if termo or page_obj.number %}?q={{ termo|urlencode }}&page={{ page_obj.number }}{% endif %}" class="d-flex gap-2 align-items-center">
+                            {% csrf_token %}
+                            <select class="form-select form-select-sm" name="tipo_perfil" aria-label="Função de {{ perfil.usuario.get_full_name|default:perfil.usuario.username }}">
+                                <option value="recepcao" {% if perfil.tipo_perfil == "recepcao" %}selected{% endif %}>Recepção</option>
+                                <option value="checkin" {% if perfil.tipo_perfil == "checkin" %}selected{% endif %}>Check-in</option>
+                                <option value="checkout" {% if perfil.tipo_perfil == "checkout" %}selected{% endif %}>Checkout</option>
+                                <option value="professor" {% if perfil.tipo_perfil == "professor" %}selected{% endif %}>Professor</option>
+                                <option value="coordenacao" {% if perfil.tipo_perfil == "coordenacao" %}selected{% endif %}>Coordenação</option>
+                                <option value="admin" {% if perfil.tipo_perfil == "admin" %}selected{% endif %}>Admin</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline-primary" type="submit">
+                                <i class="bi bi-check-circle"></i> Salvar
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        {% if perfil.usuario.responsavel %}
+                            <span class="badge text-bg-success">Sim</span>
+                            <small class="text-muted d-block">{{ perfil.total_criancas }} criança{{ perfil.total_criancas|pluralize }}</small>
+                        {% else %}
+                            <span class="text-muted">Não</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if perfil.ativo and perfil.usuario.is_active %}
+                            <span class="badge text-bg-success">Ativo</span>
+                        {% else %}
+                            <span class="badge text-bg-secondary">Inativo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if perfil.usuario.last_login %}
+                            {{ perfil.usuario.last_login|date:"d/m/Y H:i" }}
+                        {% else %}
+                            <span class="text-muted">Nunca acessou</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center text-muted py-4">Nenhum usuário staff encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="staff-mobile-list">
+        {% for perfil in perfis %}
+            <div class="staff-mobile-item">
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                    <div>
+                        <strong>{{ perfil.usuario.get_full_name|default:perfil.usuario.username }}</strong><br>
+                        <small class="text-muted">{{ perfil.usuario.email|default:"Sem e-mail" }}</small>
+                    </div>
+                    <div>
+                        {% if perfil.ativo and perfil.usuario.is_active %}
+                            <span class="badge text-bg-success">Ativo</span>
+                        {% else %}
+                            <span class="badge text-bg-secondary">Inativo</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <form method="post" action="{% url 'accounts:staff_role_update' perfil.id %}{% if termo or page_obj.number %}?q={{ termo|urlencode }}&page={{ page_obj.number }}{% endif %}" class="staff-role-form mb-3">
+                    {% csrf_token %}
+                    <label class="form-label small text-muted" for="tipo-perfil-mobile-{{ perfil.id }}">Função</label>
+                    <div class="d-grid gap-2">
+                        <select class="form-select" id="tipo-perfil-mobile-{{ perfil.id }}" name="tipo_perfil">
+                            <option value="recepcao" {% if perfil.tipo_perfil == "recepcao" %}selected{% endif %}>Recepção</option>
+                            <option value="checkin" {% if perfil.tipo_perfil == "checkin" %}selected{% endif %}>Check-in</option>
+                            <option value="checkout" {% if perfil.tipo_perfil == "checkout" %}selected{% endif %}>Checkout</option>
+                            <option value="professor" {% if perfil.tipo_perfil == "professor" %}selected{% endif %}>Professor</option>
+                            <option value="coordenacao" {% if perfil.tipo_perfil == "coordenacao" %}selected{% endif %}>Coordenação</option>
+                            <option value="admin" {% if perfil.tipo_perfil == "admin" %}selected{% endif %}>Admin</option>
+                        </select>
+                        <button class="btn btn-outline-primary" type="submit">
+                            <i class="bi bi-check-circle"></i> Salvar função
+                        </button>
+                    </div>
+                </form>
+
+                <div class="row g-2 small">
+                    <div class="col-6">
+                        <span class="text-muted d-block">Também responsável</span>
+                        {% if perfil.usuario.responsavel %}
+                            <span class="badge text-bg-success">Sim</span>
+                            <span class="text-muted">{{ perfil.total_criancas }} criança{{ perfil.total_criancas|pluralize }}</span>
+                        {% else %}
+                            <span>Não</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted d-block">Último acesso</span>
+                        {% if perfil.usuario.last_login %}
+                            {{ perfil.usuario.last_login|date:"d/m/Y H:i" }}
+                        {% else %}
+                            Nunca acessou
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="text-center text-muted py-4">Nenhum usuário staff encontrado.</div>
+        {% endfor %}
+    </div>
+    {% include "includes/paginacao.html" with page_obj=page_obj paginator=paginator termo=termo %}
+</div>
+{% endblock %}

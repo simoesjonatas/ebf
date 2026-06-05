@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Meu perfil - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <div class="eyebrow">Conta</div>
+        <h1 class="h3 mb-0">Meu perfil</h1>
+    </div>
+    {% if perfil.is_coordenacao or perfil.is_admin %}
+        <a href="{% url 'accounts:perfil_edit' %}" class="btn btn-primary"><i class="bi bi-pencil"></i> Editar perfil</a>
+    {% endif %}
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">Dados de acesso</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Nome</dt>
+                    <dd class="col-sm-8">{{ request.user.get_full_name|default:request.user.username }}</dd>
+                    <dt class="col-sm-4">E-mail</dt>
+                    <dd class="col-sm-8">{{ request.user.email|default:"Não informado" }}</dd>
+                    <dt class="col-sm-4">Perfil</dt>
+                    <dd class="col-sm-8"><span class="badge text-bg-primary">{{ perfil.get_tipo_perfil_display }}</span></dd>
+                    <dt class="col-sm-4">Responsável</dt>
+                    <dd class="col-sm-8">
+                        {% if is_responsavel_user %}
+                            <span class="badge text-bg-success">Sim</span>
+                        {% else %}
+                            <span class="badge text-bg-secondary">Não</span>
+                        {% endif %}
+                    </dd>
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        {% if perfil.ativo %}
+                            <span class="badge text-bg-success">Ativo</span>
+                        {% else %}
+                            <span class="badge text-bg-secondary">Inativo</span>
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">Atalhos</div>
+            <div class="card-body action-grid">
+                <a href="{% url 'core:home' %}" class="btn btn-outline-primary"><i class="bi bi-house"></i> Início</a>
+                {% if is_responsavel_user %}
+                    <a href="{% url 'responsaveis:editar_perfil' %}" class="btn btn-outline-primary"><i class="bi bi-person-lines-fill"></i> Dados do responsável</a>
+                    <a href="{% url 'responsaveis:minhas_criancas' %}" class="btn btn-outline-success"><i class="bi bi-people"></i> Minhas crianças</a>
+                {% endif %}
+                {% if perfil.is_coordenacao or perfil.is_admin %}
+                    <a href="{% url 'accounts:staff_register' %}" class="btn btn-outline-primary"><i class="bi bi-person-badge"></i> Cadastrar staff</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if responsavel %}
+<div class="row g-4 mt-1">
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">QR Code do responsável</div>
+            <div class="card-body text-center">
+                <img class="qr-image mb-3" src="{{ qr_code_responsavel }}" alt="QR Code do responsável">
+                <p class="text-muted mb-0">Use este QR Code na recepção para localizar as crianças vinculadas.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center gap-2">
+                <span>Crianças vinculadas</span>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'responsaveis:gerar_qr_checkin_lote' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-qr-code"></i> Check-in</a>
+                    <a href="{% url 'responsaveis:gerar_qr_checkout_lote' %}" class="btn btn-sm btn-outline-info"><i class="bi bi-qr-code-scan"></i> Check-out</a>
+                    <a href="{% url 'criancas:criar' %}" class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Cadastrar</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Criança</th>
+                                <th>Turma</th>
+                                <th>Status hoje</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in criancas_info %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width: 46px; flex: 0 0 46px;">
+                                            {% if item.crianca.foto %}
+                                                <img src="{{ item.crianca.foto.url }}" alt="Foto de {{ item.crianca.nome_completo }}" class="rounded border w-100" style="aspect-ratio: 3 / 4; object-fit: cover;">
+                                            {% else %}
+                                                <div class="rounded border bg-light text-muted d-grid text-center" style="aspect-ratio: 3 / 4; place-items: center; font-size: .65rem;">Sem foto</div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <strong>{{ item.crianca.nome_completo }}</strong><br>
+                                            <small class="text-muted">{{ item.crianca.codigo_interno }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{% if item.crianca.turma %}{{ item.crianca.turma.nome }}{% else %}<span class="text-muted">Não atribuída</span>{% endif %}</td>
+                                <td>{{ item.status }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'responsaveis:detalhe_crianca' item.crianca.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Detalhes</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center text-muted py-4">Nenhuma criança vinculada.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

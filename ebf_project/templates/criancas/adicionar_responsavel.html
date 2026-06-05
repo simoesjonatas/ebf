@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar responsável - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-person-plus"></i> Adicionar responsável a {{ crianca.nome_completo }}</div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    Para ter dois logins apontando para a mesma criança, primeiro cadastre o outro adulto como responsável. Depois informe aqui o e-mail, telefone ou documento desse cadastro e defina as permissões.
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label" for="{{ form.identificador_responsavel.id_for_label }}">Responsável</label>
+                            {{ form.identificador_responsavel }}
+                            {% if form.identificador_responsavel.help_text %}
+                                <small class="form-text text-muted">{{ form.identificador_responsavel.help_text }}</small>
+                            {% endif %}
+                            {% for error in form.identificador_responsavel.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="{{ form.parentesco.id_for_label }}">Parentesco</label>
+                            {{ form.parentesco }}
+                            {% for error in form.parentesco.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6 form-check ms-3">{{ form.pode_fazer_checkin }} <label class="form-check-label">Pode fazer check-in</label></div>
+                        <div class="col-md-6 form-check ms-3">{{ form.pode_fazer_checkout }} <label class="form-check-label">Pode fazer check-out</label></div>
+                        <div class="col-md-6 form-check ms-3">{{ form.pode_editar_dados }} <label class="form-check-label">Pode editar dados</label></div>
+                        <div class="col-md-6 form-check ms-3">{{ form.responsavel_principal }} <label class="form-check-label">Responsável principal</label></div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-success" type="submit"><i class="bi bi-check-circle"></i> Adicionar</button>
+                        <a class="btn btn-outline-secondary" href="{% url 'responsaveis:detalhe_crianca' crianca.id %}">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

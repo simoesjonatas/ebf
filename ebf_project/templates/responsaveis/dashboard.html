@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard do responsável - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <div class="eyebrow">Responsável</div>
+        <h1 class="h3 mb-0">{{ responsavel.nome_completo }}</h1>
+    </div>
+    <a href="{% url 'responsaveis:editar_perfil' %}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Editar dados</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">QR Code do responsável</div>
+            <div class="card-body text-center">
+                <img class="qr-image mb-3" src="{{ qr_code_responsavel }}" alt="QR Code do responsável">
+                <p class="text-muted mb-0">Use este QR Code na recepção para localizar as crianças vinculadas.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Crianças vinculadas</span>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'responsaveis:gerar_qr_checkin_lote' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-qr-code"></i> QR check-in</a>
+                    <a href="{% url 'responsaveis:gerar_qr_checkout_lote' %}" class="btn btn-sm btn-outline-info"><i class="bi bi-qr-code-scan"></i> QR check-out</a>
+                    <a href="{% url 'criancas:criar' %}" class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Cadastrar</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Status hoje</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in criancas_info %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.crianca.nome_completo }}</strong><br>
+                                    <small class="text-muted">{{ item.crianca.codigo_interno }}</small>
+                                </td>
+                                <td>{{ item.status }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'responsaveis:detalhe_crianca' item.crianca.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Detalhes</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="text-center text-muted py-4">Nenhuma criança vinculada.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

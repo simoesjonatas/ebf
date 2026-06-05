@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="mb-4">
+            <div class="eyebrow">Responsável</div>
+            <h1 class="h3 mb-1">{{ titulo }}</h1>
+            <p class="text-muted mb-0">{{ descricao }}</p>
+        </div>
+
+        {% if qr_code and lote %}
+            <div class="card mb-4">
+                <div class="card-header">QR temporário de {{ tipo }}</div>
+                <div class="card-body text-center">
+                    <img class="qr-image mb-3" src="{{ qr_code }}" alt="QR Code temporário de {{ tipo }}">
+                    <p class="mb-1"><strong>{{ lote.criancas.count }} criança{{ lote.criancas.count|pluralize }} selecionada{{ lote.criancas.count|pluralize }}</strong></p>
+                    <p class="text-muted mb-0">Válido até {{ lote.expira_em|date:"d/m/Y H:i" }}. Use uma única vez.</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <form method="post" class="card">
+            {% csrf_token %}
+            <div class="card-header">Selecionar crianças</div>
+            <div class="card-body">
+                {% if form.criancas.field.queryset %}
+                    <div class="row g-2">
+                        {% for choice in form.criancas %}
+                            <div class="col-md-6">
+                                <label class="border rounded p-3 d-block" for="{{ choice.id_for_label }}">
+                                    {{ choice.tag }}
+                                    <span class="ms-2">{{ choice.choice_label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        Nenhuma criança disponível para gerar QR de {{ tipo }} agora.
+                    </div>
+                {% endif %}
+                {% for error in form.criancas.errors %}
+                    <div class="text-danger small mt-2">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="card-footer bg-white d-flex gap-2">
+                <button class="btn btn-accent" type="submit" {% if not form.criancas.field.queryset %}disabled{% endif %}>
+                    <i class="bi bi-qr-code"></i> Gerar QR
+                </button>
+                <a class="btn btn-outline-secondary" href="{% url 'responsaveis:minhas_criancas' %}">Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

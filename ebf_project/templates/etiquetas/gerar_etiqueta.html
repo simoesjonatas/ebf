@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Etiqueta - {{ crianca.nome_completo }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .etiqueta {
+        width: 100%;
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 2px solid #000;
+        background: white;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .etiqueta-header {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+    }
+    .etiqueta-nome {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 15px 0;
+    }
+    .etiqueta-info {
+        font-size: 14px;
+        margin: 10px 0;
+    }
+    .etiqueta-codigo {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+        background: #f0f0f0;
+        padding: 5px;
+        border-radius: 3px;
+    }
+    .etiqueta-qr {
+        margin: 15px 0;
+    }
+    .etiqueta-qr img {
+        width: 150px;
+        height: 150px;
+    }
+    .etiqueta-aviso {
+        background-color: #fff3cd;
+        border: 1px solid #ffc107;
+        padding: 8px;
+        margin-top: 10px;
+        font-size: 12px;
+        color: #856404;
+        border-radius: 3px;
+    }
+    @media print {
+        body { background: white; }
+        .etiqueta { box-shadow: none; }
+        .btn { display: none; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Etiqueta</h2>
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="bi bi-printer"></i> Imprimir
+            </button>
+        </div>
+
+        <!-- Etiqueta -->
+        <div class="etiqueta">
+            <div class="etiqueta-header">
+                EBF PIBVP
+            </div>
+            
+            <div class="etiqueta-nome">
+                {{ crianca.nome_completo }}
+            </div>
+            
+            {% if crianca.turma %}
+            <div class="etiqueta-info">
+                <strong>Turma:</strong> {{ crianca.turma.nome }}
+            </div>
+            {% endif %}
+            
+            <div class="etiqueta-codigo">
+                {{ crianca.codigo_interno }}
+            </div>
+            
+            {% if qr_code %}
+                <div class="etiqueta-qr">
+                    <img src="{{ qr_code }}" alt="QR Code">
+                </div>
+                <div class="etiqueta-info">
+                    QR temporário de check-out<br>
+                    Válido até {{ checkout_token_expira_em|date:"H:i" }}
+                </div>
+            {% endif %}
+            
+            {% if crianca.tem_observacoes_importantes %}
+            <div class="etiqueta-aviso">
+                ⚠️ Atenção: possui observações cadastradas
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Botões -->
+        <div class="mt-4 text-center">
+            <a href="{% url 'etiquetas:marcar_impressa' etiqueta.id %}" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> Marcar como Impressa
+            </a>
+            <a href="{% url 'presencas:leitura_qr_checkin' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Próximo Check-in
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Login - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0"><i class="bi bi-box-arrow-in-right"></i> Login</h4>
+            </div>
+            <div class="card-body">
+                {% if login_error %}
+                    <div class="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+                        <div>
+                            <strong>Não foi possível entrar.</strong><br>
+                            {{ login_error }}
+                        </div>
+                    </div>
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">{{ form.password.label }}</label>
+                        <div class="input-group">
+                            {{ form.password }}
+                            <button class="btn btn-outline-secondary js-toggle-password" type="button" data-target="{{ form.password.id_for_label }}" aria-label="Visualizar senha">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-box-arrow-in-right"></i> Entrar</button>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a class="small fw-semibold" href="{% url 'accounts:password_reset' %}">Esqueci a senha</a>
+                    </div>
+                </form>
+                <hr>
+                <p class="text-center">
+                    Não tem conta? <a href="{% url 'accounts:register' %}">Registre-se aqui</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

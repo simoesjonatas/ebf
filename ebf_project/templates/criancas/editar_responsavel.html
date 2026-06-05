@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Permissões do responsável - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="mb-4">
+            <div class="eyebrow">Responsáveis autorizados</div>
+            <h1 class="h3 mb-1">{{ vinculo.responsavel.nome_completo }}</h1>
+            <p class="text-muted mb-0">Altere os direitos deste responsável para {{ crianca.nome_completo }}.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label">Parentesco</label>
+                        {{ form.parentesco }}
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="quick-card">
+                                {{ form.pode_fazer_checkin }}
+                                <strong class="d-block mt-2">Check-in</strong>
+                                <span class="text-muted">Pode registrar entrada da criança.</span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="quick-card">
+                                {{ form.pode_fazer_checkout }}
+                                <strong class="d-block mt-2">Check-out</strong>
+                                <span class="text-muted">Pode retirar a criança.</span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="quick-card">
+                                {{ form.pode_editar_dados }}
+                                <strong class="d-block mt-2">Editar dados</strong>
+                                <span class="text-muted">Pode alterar cadastro e responsáveis.</span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="quick-card">
+                                {{ form.responsavel_principal }}
+                                <strong class="d-block mt-2">Principal</strong>
+                                <span class="text-muted">Pode governar os acessos da criança.</span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="quick-card">
+                                {{ form.ativo }}
+                                <strong class="d-block mt-2">Acesso ativo</strong>
+                                <span class="text-muted">Desmarcar remove o acesso sem apagar histórico.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-accent" type="submit"><i class="bi bi-check-circle"></i> Salvar permissões</button>
+                        <a class="btn btn-outline-secondary" href="{% url 'responsaveis:detalhe_crianca' crianca.id %}">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

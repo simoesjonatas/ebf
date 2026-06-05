@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Ativar responsável - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="mb-4">
+            <div class="eyebrow">Área da família</div>
+            <h1 class="h3 mb-1">Ativar cadastro de responsável</h1>
+            <p class="text-muted mb-0">Qualquer usuário do sistema pode também ser responsável por criança. Complete estes dados uma vez para liberar vínculos e cadastros.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Nome completo</label>
+                            {{ form.nome_completo }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Telefone</label>
+                            {{ form.telefone }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Documento</label>
+                        {{ form.documento }}
+                        <small class="text-muted">Opcional, mas ajuda a encontrar o responsável ao vincular uma criança.</small>
+                    </div>
+                    <div class="form-check mb-4">
+                        {{ form.autorizacao_imagem }}
+                        <label class="form-check-label">Autorizo uso de imagem nas atividades da EBF</label>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-accent" type="submit"><i class="bi bi-check-circle"></i> Ativar</button>
+                        <a class="btn btn-outline-secondary" href="{% url 'core:home' %}">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

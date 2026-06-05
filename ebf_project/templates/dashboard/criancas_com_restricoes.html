@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Restrições e cuidados - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Crianças com restrições e cuidados</h1>
+    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">Voltar</a>
+</div>
+<div class="card">
+    <div class="card-body table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>Criança</th><th>Turma</th><th>Alergias</th><th>Alimentação</th><th>Cuidados</th></tr></thead>
+            <tbody>
+                {% for crianca in criancas %}
+                <tr>
+                    <td><strong>{{ crianca.nome_completo }}</strong><br><small class="text-muted">{{ crianca.codigo_interno }}</small></td>
+                    <td>{% if crianca.turma %}{{ crianca.turma.nome }}{% else %}-{% endif %}</td>
+                    <td>{{ crianca.alergias|default:"-"|linebreaksbr }}</td>
+                    <td>{{ crianca.restricoes_alimentares|default:"-"|linebreaksbr }}</td>
+                    <td>{{ crianca.cuidados_especiais|default:"-"|linebreaksbr }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center text-muted py-4">Nenhuma restrição cadastrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

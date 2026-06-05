@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}Home - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="hero-panel mb-4">
+    <div class="eyebrow">EBF PIBVP</div>
+    <h1 class="h2 mb-2">Controle de crianças, presença e retirada</h1>
+    <p class="mb-0">Acesse rapidamente a área de família ou as ferramentas operacionais do seu perfil.</p>
+</div>
+
+{% if user.is_authenticated %}
+    {% if has_responsavel %}
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="eyebrow">Família</div>
+                    <div class="stat-value text-primary">{{ total_criancas|default:0 }}</div>
+                    <p class="mb-3">Crianças vinculadas</p>
+                    <a href="{% url 'responsaveis:minhas_criancas' %}" class="btn btn-primary btn-sm">Ver crianças</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="eyebrow">Hoje</div>
+                    <div class="stat-value text-success">{{ presentes|default:0 }}</div>
+                    <p class="mb-0">Presentes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="eyebrow">Hoje</div>
+                    <div class="stat-value text-info">{{ retiradas|default:0 }}</div>
+                    <p class="mb-0">Retiradas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <a href="{% url 'criancas:criar' %}" class="quick-card">
+                <i class="bi bi-person-plus"></i>
+                <h2 class="h5 mt-2">Cadastrar criança</h2>
+                <p class="text-muted mb-0">A turma será sugerida automaticamente pela idade.</p>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'responsaveis:editar_perfil' %}" class="quick-card">
+                <i class="bi bi-person-lines-fill"></i>
+                <h2 class="h5 mt-2">Dados do responsável</h2>
+                <p class="text-muted mb-0">Atualize telefone, documento e autorização de imagem.</p>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not has_responsavel %}
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <a href="{% url 'responsaveis:ativar' %}" class="quick-card">
+                <i class="bi bi-person-heart"></i>
+                <h2 class="h5 mt-2">Também sou responsável</h2>
+                <p class="text-muted mb-0">Ative a área de responsável para vincular ou cadastrar crianças.</p>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if tipo_perfil == 'recepcao' %}
+    <div class="row g-3">
+        <div class="col-md-6">
+            <a href="{% url 'criancas:buscar' %}" class="quick-card">
+                <i class="bi bi-search"></i>
+                <h2 class="h5 mt-2">Pesquisar criança</h2>
+                <p class="text-muted mb-0">Consulte foto, turma, alertas e responsáveis autorizados.</p>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'presencas:leitura_qr_checkin' %}" class="quick-card">
+                <i class="bi bi-qr-code-scan"></i>
+                <h2 class="h5 mt-2">Check-in</h2>
+                <p class="text-muted mb-0">Escaneie o QR Code da criança ou do responsável.</p>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'presencas:leitura_qr_checkout' %}" class="quick-card">
+                <i class="bi bi-box-arrow-right"></i>
+                <h2 class="h5 mt-2">Check-out</h2>
+                <p class="text-muted mb-0">Confirme retirada por QR temporário e responsável autorizado.</p>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'etiquetas:listar_etiquetas_dia' %}" class="quick-card">
+                <i class="bi bi-printer"></i>
+                <h2 class="h5 mt-2">Etiquetas do dia</h2>
+                <p class="text-muted mb-0">Acompanhe impressão e reimpressão das etiquetas.</p>
+            </a>
+        </div>
+    </div>
+
+    {% elif tipo_perfil == 'checkin' %}
+    <div class="row g-3">
+        <div class="col-md-6">
+            <a href="{% url 'criancas:buscar' %}" class="quick-card">
+                <i class="bi bi-search"></i>
+                <h2 class="h5 mt-2">Pesquisar criança</h2>
+                <p class="text-muted mb-0">Consulte foto, turma, alertas e responsáveis autorizados.</p>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'presencas:leitura_qr_checkin' %}" class="quick-card">
+                <i class="bi bi-qr-code-scan"></i>
+                <h2 class="h5 mt-2">Check-in</h2>
+                <p class="text-muted mb-0">Escaneie o QR Code temporário para entrada.</p>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'etiquetas:listar_etiquetas_dia' %}" class="quick-card">
+                <i class="bi bi-printer"></i>
+                <h2 class="h5 mt-2">Etiquetas do dia</h2>
+                <p class="text-muted mb-0">Acompanhe impressão e reimpressão das etiquetas.</p>
+            </a>
+        </div>
+    </div>
+
+    {% elif tipo_perfil == 'checkout' %}
+    <div class="row g-3">
+        <div class="col-md-6">
+            <a href="{% url 'criancas:buscar' %}" class="quick-card">
+                <i class="bi bi-search"></i>
+                <h2 class="h5 mt-2">Pesquisar criança</h2>
+                <p class="text-muted mb-0">Confira responsáveis autorizados antes da retirada.</p>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'presencas:leitura_qr_checkout' %}" class="quick-card">
+                <i class="bi bi-box-arrow-right"></i>
+                <h2 class="h5 mt-2">Check-out</h2>
+                <p class="text-muted mb-0">Confirme retirada apenas por responsáveis autorizados.</p>
+            </a>
+        </div>
+    </div>
+
+    {% elif tipo_perfil == 'coordenacao' or tipo_perfil == 'admin' %}
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="eyebrow">Crianças</div>
+                    <div class="stat-value text-primary">{{ stats.total_criancas }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="eyebrow">Presentes</div>
+                    <div class="stat-value text-success">{{ stats.presentes_hoje }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="eyebrow">Retiradas</div>
+                    <div class="stat-value text-info">{{ stats.retiradas_hoje }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="eyebrow">Alertas</div>
+                    <div class="stat-value text-warning">{{ stats.presentes_com_alergia }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'criancas:buscar' %}" class="quick-card"><i class="bi bi-search"></i><h2 class="h6 mt-2">Pesquisar criança</h2></a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'presencas:leitura_qr_checkin' %}" class="quick-card"><i class="bi bi-qr-code-scan"></i><h2 class="h6 mt-2">Check-in</h2></a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'presencas:leitura_qr_checkout' %}" class="quick-card"><i class="bi bi-box-arrow-right"></i><h2 class="h6 mt-2">Check-out</h2></a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'dashboard:presenca_por_dia' %}" class="quick-card"><i class="bi bi-calendar"></i><h2 class="h6 mt-2">Presença por dia</h2></a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'dashboard:criancas_por_turma' %}" class="quick-card"><i class="bi bi-collection"></i><h2 class="h6 mt-2">Crianças por turma</h2></a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'dashboard:criancas_com_restricoes' %}" class="quick-card"><i class="bi bi-exclamation-triangle"></i><h2 class="h6 mt-2">Restrições</h2></a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'accounts:staff_list' %}" class="quick-card"><i class="bi bi-person-badge"></i><h2 class="h6 mt-2">Usuários staff</h2></a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'accounts:responsaveis_list' %}" class="quick-card"><i class="bi bi-people"></i><h2 class="h6 mt-2">Usuários responsáveis</h2></a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'turmas:listar' %}" class="quick-card"><i class="bi bi-grid-3x3-gap"></i><h2 class="h6 mt-2">Gerenciar turmas</h2></a>
+        </div>
+    </div>
+    {% endif %}
+
+{% else %}
+    <!-- Home Anônima -->
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Sistema de Controle EBF</h3>
+                    <p class="card-text">Bem-vindo! Para começar, faça login ou crie uma conta.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                        <a href="{% url 'accounts:register' %}" class="btn btn-success btn-lg">
+                            <i class="bi bi-person-plus"></i> Criar Conta
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}

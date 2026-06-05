@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastrar Criança - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="mb-4">
+            <div class="eyebrow">Cadastro familiar</div>
+            <h1 class="h3 mb-1"><i class="bi bi-person-plus"></i> Cadastrar criança</h1>
+            <p class="text-muted mb-0">Informe a data de nascimento; a turma será definida automaticamente pela faixa etária cadastrada.</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nome Completo *</label>
+                            {{ form.nome_completo }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Data de Nascimento *</label>
+                            {{ form.data_nascimento }}
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-4">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="photo-3x4-preview">
+                                <span id="fotoPlaceholder" {% if crianca.foto %}class="d-none"{% endif %}><i class="bi bi-person-bounding-box"></i><br>Foto 3x4</span>
+                                <img id="fotoPreview" alt="Prévia da foto da criança" {% if crianca.foto %}src="{{ crianca.foto.url }}"{% else %}class="d-none"{% endif %}>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label" for="{{ form.foto.id_for_label }}">Foto da criança *</label>
+                            {{ form.foto }}
+                            {% if form.foto.help_text %}
+                                <small class="form-text text-muted">{{ form.foto.help_text }}</small>
+                            {% endif %}
+                            {% for error in form.foto.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4 form-check">
+                        {{ form.autorizacao_imagem }}
+                        <label class="form-check-label" for="{{ form.autorizacao_imagem.id_for_label }}">
+                            Autorizo o uso de imagens da criança em atividades da EBF
+                        </label>
+                    </div>
+
+                    <div class="mb-4">
+                        <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#observacoesCrianca" aria-expanded="{% if form.alergias.value or form.restricoes_alimentares.value or form.cuidados_especiais.value or form.observacoes.value %}true{% else %}false{% endif %}" aria-controls="observacoesCrianca">
+                            <i class="bi bi-plus-circle"></i> Adicionar observações, alergias ou cuidados
+                        </button>
+                    </div>
+
+                    <div class="collapse {% if form.alergias.value or form.restricoes_alimentares.value or form.cuidados_especiais.value or form.observacoes.value %}show{% endif %}" id="observacoesCrianca">
+                        <div class="border rounded p-3 mb-4 bg-light">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Alergias</label>
+                                    {{ form.alergias }}
+                                    <small class="form-text text-muted">Ex: Amendoim, lactose, ovos.</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Restrições alimentares</label>
+                                    {{ form.restricoes_alimentares }}
+                                    <small class="form-text text-muted">Ex: Sem glúten, vegetariano.</small>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Cuidados especiais</label>
+                                    {{ form.cuidados_especiais }}
+                                    <small class="form-text text-muted">Ex: Asma, medicação, dificuldade auditiva.</small>
+                                </div>
+                                <div class="col-md-6 mb-0">
+                                    <label class="form-label">Observações importantes</label>
+                                    {{ form.observacoes }}
+                                    <small class="form-text text-muted">Qualquer outra informação relevante.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-accent">
+                            <i class="bi bi-check-circle"></i> Cadastrar
+                        </button>
+                        <a href="{% url 'responsaveis:minhas_criancas' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .photo-3x4-preview {
+        width: 132px;
+        aspect-ratio: 3 / 4;
+        border: 2px dashed var(--ebf-border);
+        border-radius: 8px;
+        background: #f8fafc;
+        display: grid;
+        place-items: center;
+        color: var(--ebf-muted);
+        text-align: center;
+        font-weight: 600;
+        overflow: hidden;
+    }
+    .photo-3x4-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const fotoInput = document.querySelector('input[name="foto"]');
+    const fotoPreview = document.getElementById('fotoPreview');
+    const fotoPlaceholder = document.getElementById('fotoPlaceholder');
+
+    if (fotoInput) {
+        fotoInput.addEventListener('change', () => {
+            const file = fotoInput.files && fotoInput.files[0];
+            if (!file) return;
+            fotoPreview.src = URL.createObjectURL(file);
+            fotoPreview.classList.remove('d-none');
+            fotoPlaceholder.classList.add('d-none');
+        });
+    }
+</script>
+{% endblock %}

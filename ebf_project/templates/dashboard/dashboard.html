@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Coordenação{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-graph-up"></i> Dashboard Coordenação</h2>
+
+<!-- Estatísticas -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Total de Crianças</h5>
+                <h2 class="text-primary">{{ stats.total_criancas }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Presentes Hoje</h5>
+                <h2 class="text-success">{{ stats.presentes_hoje }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Retiradas</h5>
+                <h2 class="text-info">{{ stats.retiradas_hoje }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Dentro da Igreja</h5>
+                <h2 class="text-warning">{{ stats.dentro_da_igreja }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alertas -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card border-warning">
+            <div class="card-body">
+                <h5 class="card-title text-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Com Alergias (Presentes)
+                </h5>
+                <h2 class="text-warning">{{ stats.presentes_com_alergia }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card border-danger">
+            <div class="card-body">
+                <h5 class="card-title text-danger">
+                    <i class="bi bi-exclamation-circle"></i> Checkouts Pendentes
+                </h5>
+                <h2 class="text-danger">{{ stats.checkouts_pendentes }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card border-info">
+            <div class="card-body">
+                <h5 class="card-title text-info">
+                    <i class="bi bi-info-circle"></i> Sem Responsável Autorizado
+                </h5>
+                <h2 class="text-info">{{ stats.criancas_sem_responsavel }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Turmas -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Crianças por Turma</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Turma</th>
+                                <th>Total</th>
+                                <th>Presentes Hoje</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for turma in stats.turmas %}
+                            <tr>
+                                <td><strong>{{ turma.nome }}</strong> ({{ turma.faixa_etaria }})</td>
+                                <td>{{ turma.total_criancas }}</td>
+                                <td>{{ turma.presentes }}</td>
+                                <td>
+                                    {% if turma.total_criancas > 0 %}
+                                        {{ turma.presentes|add:0|floatformat:0 }}%
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Nenhuma turma cadastrada</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Relatórios -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Relatórios</h5>
+            </div>
+            <div class="card-body">
+                <div class="btn-group" role="group">
+                    <a href="{% url 'dashboard:presenca_por_dia' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-calendar"></i> Presença por Dia
+                    </a>
+                    <a href="{% url 'dashboard:criancas_por_turma' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-collection"></i> Crianças por Turma
+                    </a>
+                    <a href="{% url 'dashboard:criancas_com_restricoes' %}" class="btn btn-outline-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Alergias/Restrições
+                    </a>
+                    <a href="{% url 'dashboard:historico_checkin_checkout' %}" class="btn btn-outline-info">
+                        <i class="bi bi-clock-history"></i> Histórico
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

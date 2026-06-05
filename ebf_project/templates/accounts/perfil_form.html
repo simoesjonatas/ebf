@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Editar perfil - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-person-gear"></i> Editar perfil do sistema</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.tipo_perfil.id_for_label }}">Tipo de perfil</label>
+                        {{ form.tipo_perfil }}
+                    </div>
+                    <div class="form-check mb-4">
+                        {{ form.ativo }}
+                        <label class="form-check-label" for="{{ form.ativo.id_for_label }}">Perfil ativo</label>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="submit"><i class="bi bi-check-circle"></i> Salvar</button>
+                        <a class="btn btn-outline-secondary" href="{% url 'accounts:profile' %}">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

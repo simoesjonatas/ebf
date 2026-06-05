@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{{ crianca.nome_completo }} - Informações{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <div class="eyebrow">Informações da criança</div>
+        <h1 class="h3 mb-0">{{ crianca.nome_completo }}</h1>
+    </div>
+    <a href="{% url 'criancas:buscar' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar à busca</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Identificação</div>
+            <div class="card-body text-center">
+                {% if crianca.foto %}
+                    <img src="{{ crianca.foto.url }}" alt="Foto de {{ crianca.nome_completo }}" class="img-fluid rounded border mb-3" style="max-width: 210px; aspect-ratio: 3 / 4; object-fit: cover;">
+                {% else %}
+                    <div class="empty-state mb-3">Sem foto</div>
+                {% endif %}
+                <h2 class="h5">{{ crianca.codigo_interno }}</h2>
+                <p class="text-muted mb-0">{{ crianca.get_idade }} anos · {% if crianca.turma %}{{ crianca.turma.nome }}{% else %}Sem turma{% endif %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">Status de hoje</div>
+            <div class="card-body">
+                {% if presenca_hoje %}
+                    <p class="mb-1"><strong>Status:</strong> {{ presenca_hoje.get_status_display }}</p>
+                    <p class="mb-1"><strong>Check-in:</strong> {{ presenca_hoje.horario_checkin|date:"H:i"|default:"-" }}</p>
+                    <p class="mb-0"><strong>Check-out:</strong> {{ presenca_hoje.horario_checkout|date:"H:i"|default:"-" }}</p>
+                {% else %}
+                    <p class="text-muted mb-0">Sem presença registrada hoje.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">Saúde e cuidados</div>
+            <div class="card-body">
+                <p><strong>Alergias:</strong><br>{{ crianca.alergias|default:"Nenhuma informada"|linebreaksbr }}</p>
+                <p><strong>Restrições alimentares:</strong><br>{{ crianca.restricoes_alimentares|default:"Nenhuma informada"|linebreaksbr }}</p>
+                <p><strong>Cuidados especiais:</strong><br>{{ crianca.cuidados_especiais|default:"Nenhum informado"|linebreaksbr }}</p>
+                <p class="mb-0"><strong>Observações:</strong><br>{{ crianca.observacoes|default:"Nenhuma observação"|linebreaksbr }}</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Responsáveis autorizados</div>
+            <div class="card-body table-responsive">
+                <table class="table align-middle">
+                    <thead><tr><th>Nome</th><th>Contato</th><th>Permissões</th></tr></thead>
+                    <tbody>
+                        {% for vinculo in responsaveis %}
+                        <tr>
+                            <td>
+                                <strong>{{ vinculo.responsavel.nome_completo }}</strong>
+                                {% if vinculo.responsavel_principal %}<span class="badge text-bg-primary ms-1">Principal</span>{% endif %}
+                                <br><small class="text-muted">{{ vinculo.parentesco }}</small>
+                            </td>
+                            <td>
+                                {{ vinculo.responsavel.telefone|default:"Sem telefone" }}<br>
+                                <small class="text-muted">{{ vinculo.responsavel.usuario.email }}</small>
+                            </td>
+                            <td>
+                                {% if vinculo.pode_fazer_checkin %}<span class="badge text-bg-success">Check-in</span>{% endif %}
+                                {% if vinculo.pode_fazer_checkout %}<span class="badge text-bg-info">Check-out</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted py-4">Nenhum responsável ativo vinculado.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
