@@ -33,94 +33,189 @@
 }
 .card-title { color: var(--ebf-ink); font-weight: 700; }
 
-/* ---- Botões ------------------------------------------------------------- */
+/* ---- Utilitários claros do Bootstrap mapeados ao tema ------------------
+   Vários templates usam bg-white/bg-light/text-bg-light, que ficam brancos
+   no modo escuro. Aqui eles passam a seguir os tokens do tema (corrige
+   todas as páginas de uma vez, sem editar cada template).                 */
+.bg-white { background-color: var(--ebf-surface) !important; }
+.bg-light { background-color: var(--ebf-surface-2) !important; }
+.text-bg-light {
+    background-color: var(--ebf-surface-2) !important;
+    color: var(--ebf-ink) !important;
+}
+.border { border-color: var(--ebf-border) !important; }
+
+/* ---- Botões (estilo Kids) ----------------------------------------------
+   Base comum (sem profundidade). A "base 3D" é aplicada SÓ aos botões
+   sólidos mais abaixo, para que os outline/desabilitados não fiquem com
+   uma sombra solta flutuando embaixo.                                     */
 .btn {
     --bs-btn-border-radius: var(--ebf-radius-sm);
+    border: none;
     border-radius: var(--ebf-radius-sm);
-    font-weight: 600;
+    font-family: var(--ebf-font-display);
+    font-weight: 700;
     letter-spacing: .01em;
-    padding: .55rem 1.05rem;
-    transition: background var(--ebf-transition), border-color var(--ebf-transition),
-        transform var(--ebf-transition), box-shadow var(--ebf-transition);
+    padding: .6rem 1.2rem;
+    transition: transform var(--ebf-transition), box-shadow var(--ebf-transition),
+        background-color var(--ebf-transition), border-color var(--ebf-transition),
+        filter var(--ebf-transition);
 }
-.btn:active { transform: translateY(1px); }
-.btn-lg { padding: .75rem 1.4rem; font-size: var(--ebf-fs-lg); }
-.btn-sm { padding: .4rem .8rem; }
+.btn-lg { padding: .8rem 1.6rem; font-size: var(--ebf-fs-lg); border-radius: var(--ebf-radius); }
+.btn-sm { padding: .4rem .9rem; }
 
-.btn-primary {
+/* --- Botões SÓLIDOS: profundidade "3D" (base mais escura embaixo) ------- */
+.btn-primary, .btn-success, .btn-danger,
+.btn-warning, .btn-yellow, .btn-accent, .btn-info {
+    --btn-base: var(--ebf-primary-darker);
+    color: #fff;
+    box-shadow: 0 4px 0 var(--btn-base);
+}
+.btn-primary.btn-sm, .btn-success.btn-sm, .btn-danger.btn-sm,
+.btn-warning.btn-sm, .btn-yellow.btn-sm, .btn-accent.btn-sm, .btn-info.btn-sm {
+    box-shadow: 0 3px 0 var(--btn-base);
+}
+.btn-primary:hover, .btn-success:hover, .btn-danger:hover,
+.btn-warning:hover, .btn-yellow:hover, .btn-accent:hover, .btn-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 var(--btn-base), var(--ebf-shadow-sm);
+    filter: brightness(1.04);
+}
+.btn-primary:active, .btn-success:active, .btn-danger:active,
+.btn-warning:active, .btn-yellow:active, .btn-accent:active, .btn-info:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--btn-base);
+}
+.btn-primary:focus-visible, .btn-success:focus-visible, .btn-danger:focus-visible,
+.btn-warning:focus-visible, .btn-yellow:focus-visible, .btn-accent:focus-visible, .btn-info:focus-visible {
+    outline: none;
+    box-shadow: 0 4px 0 var(--btn-base), var(--ebf-shadow-focus);
+}
+
+/* Cor da base 3D por variante */
+.btn-primary { --btn-base: var(--ebf-primary-darker); }
+.btn-success { --btn-base: var(--ebf-success-dark); }
+.btn-danger  { --btn-base: var(--ebf-danger-dark); }
+.btn-accent  { --btn-base: var(--ebf-accent-dark); }
+.btn-info    { --btn-base: var(--ebf-primary-darker); }
+.btn-warning, .btn-yellow { --btn-base: var(--ebf-yellow-dark); }
+
+/* Fundo e texto repetidos em hover/focus/active para vencer o .btn:hover do
+   Bootstrap (que, em classes customizadas, zeraria o fundo no hover). */
+.btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active,
+.btn-info, .btn-info:hover, .btn-info:focus, .btn-info:active {
     background-color: var(--ebf-primary);
-    border-color: var(--ebf-primary);
-    color: #fff;
-    box-shadow: var(--ebf-shadow-xs);
-}
-.btn-primary:hover,
-.btn-primary:focus {
-    background-color: var(--ebf-primary-dark);
-    border-color: var(--ebf-primary-dark);
     color: #fff;
 }
-.btn-success {
+.btn-success, .btn-success:hover, .btn-success:focus, .btn-success:active {
     background-color: var(--ebf-success);
-    border-color: var(--ebf-success);
+    color: #fff;
 }
-.btn-success:hover { background-color: #197150; border-color: #197150; }
-.btn-danger { background-color: var(--ebf-danger); border-color: var(--ebf-danger); }
-.btn-warning { background-color: var(--ebf-warning); border-color: var(--ebf-warning); color: #fff; }
-
-.btn-accent {
+.btn-danger, .btn-danger:hover, .btn-danger:focus, .btn-danger:active {
+    background-color: var(--ebf-danger);
+    color: #fff;
+}
+.btn-accent, .btn-accent:hover, .btn-accent:focus, .btn-accent:active {
     background-color: var(--ebf-accent);
-    border-color: var(--ebf-accent);
     color: #fff;
 }
-.btn-accent:hover,
-.btn-accent:focus {
-    background-color: var(--ebf-accent-dark);
-    border-color: var(--ebf-accent-dark);
-    color: #fff;
+/* Amarelo ensolarado — texto escuro para contraste, como no mockup */
+.btn-warning, .btn-warning:hover, .btn-warning:focus, .btn-warning:active,
+.btn-yellow, .btn-yellow:hover, .btn-yellow:focus, .btn-yellow:active {
+    background-color: var(--ebf-yellow);
+    color: #5a3d00;
 }
-.btn-outline-primary {
-    color: var(--ebf-primary);
-    border-color: var(--ebf-primary);
+
+/* --- Botões OUTLINE: contorno 2px, sem base 3D ------------------------- */
+[class*="btn-outline-"] {
+    border: 2px solid;
+    background: transparent;
+    box-shadow: none;
 }
-.btn-outline-primary:hover {
-    background-color: var(--ebf-primary);
-    border-color: var(--ebf-primary);
-    color: #fff;
-}
-.btn-outline-secondary {
-    color: var(--ebf-ink-soft);
-    border-color: var(--ebf-border-strong);
-}
+[class*="btn-outline-"]:hover { transform: translateY(-1px); box-shadow: var(--ebf-shadow-sm); }
+[class*="btn-outline-"]:focus-visible { outline: none; box-shadow: var(--ebf-shadow-focus); }
+
+.btn-outline-primary,
+.btn-outline-info { color: var(--ebf-primary-dark); border-color: var(--ebf-primary); }
+.btn-outline-primary:hover,
+.btn-outline-info:hover { background-color: var(--ebf-primary); border-color: var(--ebf-primary); color: #fff; }
+
+.btn-outline-success { color: var(--ebf-success-dark); border-color: var(--ebf-success); }
+.btn-outline-success:hover { background-color: var(--ebf-success); border-color: var(--ebf-success); color: #fff; }
+
+.btn-outline-danger { color: var(--ebf-danger); border-color: var(--ebf-danger); }
+.btn-outline-danger:hover { background-color: var(--ebf-danger); border-color: var(--ebf-danger); color: #fff; }
+
+.btn-outline-warning { color: var(--ebf-yellow-dark); border-color: var(--ebf-yellow); }
+.btn-outline-warning:hover { background-color: var(--ebf-yellow); border-color: var(--ebf-yellow); color: #5a3d00; }
+
+.btn-outline-secondary { color: var(--ebf-ink-soft); border-color: var(--ebf-border-strong); }
 .btn-outline-secondary:hover {
     background-color: var(--ebf-surface-2);
     border-color: var(--ebf-border-strong);
     color: var(--ebf-ink);
 }
 
-/* ---- Hero / painel de destaque ----------------------------------------- */
+/* --- Botões desabilitados: planos, sem 3D nem salto -------------------- */
+.btn:disabled,
+.btn.disabled,
+.btn[disabled] {
+    box-shadow: none;
+    transform: none;
+    filter: none;
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+/* ---- Hero / painel de destaque (azul Kids + bolhas) -------------------- */
 .hero-panel {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--ebf-primary), var(--ebf-success));
+    background: linear-gradient(135deg, var(--ebf-primary), var(--ebf-primary-dark));
     color: #fff;
     border-radius: var(--ebf-radius-lg);
     padding: var(--ebf-space-6);
     box-shadow: var(--ebf-shadow);
 }
+/* Bolhas decorativas alegres no canto */
 .hero-panel::after {
     content: "";
     position: absolute;
-    right: -60px;
-    top: -60px;
-    width: 240px;
-    height: 240px;
-    background: radial-gradient(circle, rgba(255, 255, 255, .16), transparent 65%);
+    right: -50px;
+    top: -50px;
+    width: 220px;
+    height: 220px;
+    background:
+        radial-gradient(circle at 30% 30%, var(--ebf-yellow) 0 14px, transparent 15px),
+        radial-gradient(circle at 70% 60%, var(--ebf-accent) 0 10px, transparent 11px),
+        radial-gradient(circle, rgba(255, 255, 255, .18), transparent 62%);
     pointer-events: none;
 }
 .hero-panel h1,
 .hero-panel h2 { color: #fff; }
-.hero-panel p { color: rgba(255, 255, 255, .9); }
-.hero-panel .eyebrow { color: rgba(255, 255, 255, .78); }
+.hero-panel p { color: rgba(255, 255, 255, .92); }
+.hero-panel .eyebrow { color: rgba(255, 255, 255, .82); }
+
+/* Hero com o mascote Theozinho apontando (canto direito) */
+.hero-with-mascote {
+    display: flex;
+    align-items: center;
+    gap: var(--ebf-space-4);
+}
+.hero-with-mascote .hero-content { flex: 1; min-width: 0; }
+.hero-mascote {
+    position: relative;
+    z-index: 1;
+    width: 150px;
+    max-width: 32%;
+    height: auto;
+    margin: -1.5rem -0.5rem -2rem 0;
+    filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .25));
+}
+/* No celular o mascote é escondido para não competir com o texto */
+@media (max-width: 575.98px) {
+    .hero-mascote { display: none; }
+}
 
 /* ---- Eyebrow (rótulo pequeno em caixa alta) ---------------------------- */
 .eyebrow {
@@ -136,11 +231,110 @@
     border-radius: var(--ebf-radius);
 }
 .stat-card .card-body { padding: var(--ebf-space-5); }
-.stat-card .stat-value {
+.stat-value {
+    font-family: var(--ebf-font-display);
     font-size: clamp(1.8rem, 1.4rem + 1.6vw, 2.4rem);
     font-weight: 800;
     line-height: 1;
-    letter-spacing: -.02em;
+    letter-spacing: 0;
+}
+
+/* ---- KPI card (dashboard): ícone colorido + número --------------------- */
+.kpi-card {
+    display: flex;
+    align-items: center;
+    gap: var(--ebf-space-4);
+    height: 100%;
+    padding: var(--ebf-space-4) var(--ebf-space-5);
+    background: var(--ebf-surface);
+    border: 2px solid var(--ebf-border);
+    border-radius: var(--ebf-radius);
+    box-shadow: var(--ebf-shadow-xs);
+    transition: transform var(--ebf-transition), box-shadow var(--ebf-transition);
+}
+.kpi-card:hover { transform: translateY(-3px); box-shadow: var(--ebf-shadow-sm); }
+/* KPI clicável (leva a uma tela de detalhe) */
+a.kpi-link { text-decoration: none; color: inherit; }
+a.kpi-link:hover { border-color: var(--ebf-primary); }
+.kpi-link-arrow { color: var(--ebf-muted); font-size: 1.1rem; transition: transform var(--ebf-transition); }
+a.kpi-link:hover .kpi-link-arrow { transform: translateX(3px); color: var(--ebf-primary); }
+.kpi-icon {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    background: var(--ebf-primary-soft);
+    color: var(--ebf-primary-dark);
+}
+.kpi-card .stat-value { color: var(--ebf-ink); }
+.kpi-card .eyebrow { margin-bottom: 2px; }
+/* Variações de cor do ícone */
+.kpi-blue   .kpi-icon { background: var(--ebf-primary-soft); color: var(--ebf-primary-dark); }
+.kpi-green  .kpi-icon { background: var(--ebf-success-soft); color: var(--ebf-success-dark); }
+.kpi-orange .kpi-icon { background: var(--ebf-accent-soft);  color: var(--ebf-accent-dark); }
+.kpi-yellow .kpi-icon { background: var(--ebf-yellow-soft);  color: var(--ebf-yellow-dark); }
+.kpi-danger .kpi-icon { background: var(--ebf-danger-soft);  color: var(--ebf-danger); }
+.kpi-info   .kpi-icon { background: var(--ebf-info-soft);    color: var(--ebf-info); }
+/* Borda de alerta opcional (cuidados/atenção) */
+.kpi-card.is-alert-yellow { border-color: rgba(253, 200, 47, .6); }
+.kpi-card.is-alert-danger { border-color: rgba(239, 91, 91, .5); }
+.kpi-card.is-alert-info   { border-color: rgba(20, 169, 232, .5); }
+
+/* ---- Selo de ícone (cabeçalhos de página/relatório) -------------------- */
+.icon-badge {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+    background: var(--ebf-primary-soft);
+    color: var(--ebf-primary-dark);
+}
+.icon-badge.is-green  { background: var(--ebf-success-soft); color: var(--ebf-success-dark); }
+.icon-badge.is-orange { background: var(--ebf-accent-soft);  color: var(--ebf-accent-dark); }
+.icon-badge.is-yellow { background: var(--ebf-yellow-soft);  color: var(--ebf-yellow-dark); }
+.icon-badge.is-info   { background: var(--ebf-info-soft);    color: var(--ebf-info); }
+.icon-badge.is-danger { background: var(--ebf-danger-soft);  color: var(--ebf-danger); }
+
+/* ---- Tag suave (textos livres: alergias, cuidados) --------------------- */
+.tag-soft {
+    display: inline-block;
+    max-width: 100%;
+    padding: .25rem .6rem;
+    border-radius: var(--ebf-radius-sm);
+    font-size: var(--ebf-fs-sm);
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: normal;
+    word-break: break-word;
+    background: var(--ebf-surface-2);
+    color: var(--ebf-ink-soft);
+}
+.tag-soft.is-danger  { background: var(--ebf-danger-soft); color: var(--ebf-danger); }
+.tag-soft.is-warning { background: var(--ebf-yellow-soft); color: var(--ebf-yellow-dark); }
+.tag-soft.is-info    { background: var(--ebf-info-soft);   color: var(--ebf-info); }
+
+/* ---- Barra de progresso lúdica (percentual de presença) ---------------- */
+.progress-kids {
+    height: 12px;
+    background: var(--ebf-primary-soft);
+    border-radius: var(--ebf-radius-pill);
+    overflow: hidden;
+}
+.progress-kids > span {
+    display: block;
+    height: 100%;
+    min-width: 6px;
+    border-radius: var(--ebf-radius-pill);
+    background: linear-gradient(90deg, var(--ebf-primary), var(--ebf-accent));
+    transition: width var(--ebf-transition);
 }
 
 /* ---- Quick-cards (atalhos do dashboard/home) --------------------------- */
@@ -149,7 +343,7 @@
     flex-direction: column;
     height: 100%;
     padding: var(--ebf-space-5);
-    border: 1px solid var(--ebf-border);
+    border: 2px solid var(--ebf-border);
     border-radius: var(--ebf-radius);
     background: var(--ebf-surface);
     color: var(--ebf-ink);
@@ -160,17 +354,31 @@
 }
 .quick-card:hover,
 .quick-card:focus {
-    transform: translateY(-3px);
-    border-color: rgba(229, 111, 79, .55);
+    transform: translateY(-4px);
+    border-color: var(--ebf-primary);
     box-shadow: var(--ebf-shadow);
     color: var(--ebf-ink);
     text-decoration: none;
 }
+/* Ícone num "selo" colorido arredondado, bem Kids */
 .quick-card i {
-    color: var(--ebf-accent);
-    font-size: 1.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--ebf-space-2);
+    border-radius: 14px;
+    background: var(--ebf-primary-soft);
+    color: var(--ebf-primary-dark);
+    font-size: 1.5rem;
     line-height: 1;
+    transition: transform var(--ebf-transition);
 }
+.quick-card:hover i { transform: rotate(-6deg) scale(1.05); }
+/* Alterna as cores dos selos para um visual divertido e variado */
+.quick-card:nth-child(3n+2) i { background: var(--ebf-yellow-soft); color: var(--ebf-yellow-dark); }
+.quick-card:nth-child(3n) i   { background: var(--ebf-accent-soft); color: var(--ebf-accent-dark); }
 .quick-card h2 { color: var(--ebf-ink); }
 .quick-card p { font-size: var(--ebf-fs-sm); }
 

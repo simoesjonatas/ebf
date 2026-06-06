@@ -8,9 +8,9 @@
         <div class="eyebrow">Conta</div>
         <h1 class="h3 mb-0">Meu perfil</h1>
     </div>
-    {% if perfil.is_coordenacao or perfil.is_admin %}
+    {% comment %} {% if perfil.is_coordenacao or perfil.is_admin %}
         <a href="{% url 'accounts:perfil_edit' %}" class="btn btn-primary"><i class="bi bi-pencil"></i> Editar perfil</a>
-    {% endif %}
+    {% endif %} {% endcomment %}
 </div>
 
 <div class="row g-4">

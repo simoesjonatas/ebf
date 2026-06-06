@@ -20,9 +20,9 @@ main.app-main {
     position: sticky;
     top: 0;
     z-index: 1030;
-    background: linear-gradient(100deg, var(--ebf-primary-darker), var(--ebf-primary-dark));
-    box-shadow: var(--ebf-shadow-sm);
-    border-bottom: 1px solid rgba(255, 255, 255, .06);
+    background: linear-gradient(100deg, var(--ebf-primary), var(--ebf-primary-dark));
+    box-shadow: 0 4px 0 rgba(11, 111, 163, .35), var(--ebf-shadow-sm);
+    border-bottom: 3px solid var(--ebf-yellow);
     min-height: var(--ebf-navbar-h);
     backdrop-filter: saturate(140%) blur(2px);
 }
@@ -31,16 +31,27 @@ main.app-main {
     margin: 0 auto;
 }
 .app-navbar .navbar-brand {
+    font-family: var(--ebf-font-display);
     font-weight: 800;
-    letter-spacing: -.02em;
+    letter-spacing: 0;
     color: #fff !important;
     display: inline-flex;
     align-items: center;
     gap: .5rem;
 }
 .app-navbar .navbar-brand i {
-    color: var(--ebf-accent);
-    font-size: 1.35rem;
+    color: var(--ebf-yellow);
+    font-size: 1.5rem;
+}
+/* Selo branco com a mãozinha (contrasta com a navbar azul) */
+.app-navbar .brand-logo {
+    width: 40px;
+    height: 40px;
+    padding: 3px;
+    background: #fff;
+    border-radius: 11px;
+    object-fit: contain;
+    box-shadow: var(--ebf-shadow-xs);
 }
 .app-navbar .nav-link {
     color: rgba(255, 255, 255, .82) !important;
@@ -96,6 +107,12 @@ main.app-main {
 .app-navbar .navbar-toggler.ebf-burger:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(255, 255, 255, .28);
+}
+/* A partir do breakpoint "lg" (992px) o menu fica expandido, então o botão
+   hambúrguer some. Necessário porque nosso seletor é mais específico que a
+   regra padrão do Bootstrap (.navbar-expand-lg .navbar-toggler). */
+@media (min-width: 992px) {
+    .app-navbar .navbar-toggler.ebf-burger { display: none; }
 }
 
 .ebf-burger-box {
@@ -180,9 +197,10 @@ main.app-main {
 .app-footer {
     flex-shrink: 0;
     margin-top: var(--ebf-space-7);
-    background: var(--ebf-primary-darker);
-    color: rgba(255, 255, 255, .82);
+    background: var(--ebf-primary-dark);
+    color: rgba(255, 255, 255, .85);
     padding: var(--ebf-space-5) var(--ebf-space-4);
+    border-top: 3px solid var(--ebf-yellow);
 }
 .app-footer a {
     color: rgba(255, 255, 255, .9);
@@ -193,4 +211,51 @@ main.app-main {
     max-width: var(--ebf-shell-max);
     margin: 0 auto;
     text-align: center;
+}
+
+/* ==========================================================================
+   Página de autenticação (login, cadastro, recuperação de senha)
+   Fundo azul vibrante + card branco centralizado, como no material Kids.
+   Ative com {% block body_class %}auth-page{% endblock %} no template.
+   ========================================================================== */
+body.auth-page {
+    background:
+        radial-gradient(900px 500px at 50% -120px, rgba(255, 255, 255, .18), transparent 70%),
+        var(--ebf-bg-vivid);
+}
+body.auth-page main.app-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.auth-card {
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+    border-radius: var(--ebf-radius-lg);
+    box-shadow: var(--ebf-shadow-lg);
+    border: none;
+}
+.auth-card .card-body { padding: var(--ebf-space-6); }
+/* Logo PIBVP Kids (wordmark) no topo do card de autenticação */
+.auth-logo {
+    display: block;
+    width: 160px;
+    max-width: 60%;
+    height: auto;
+    margin: 0 auto var(--ebf-space-2);
+}
+/* Mascote Theozinho dando as boas-vindas */
+.theo-mascote {
+    display: block;
+    width: 130px;
+    max-width: 52%;
+    height: auto;
+    margin: 0 auto var(--ebf-space-3);
+    filter: drop-shadow(0 8px 14px rgba(11, 111, 163, .25));
+    animation: theo-bounce 3s ease-in-out infinite;
+}
+@keyframes theo-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
 }

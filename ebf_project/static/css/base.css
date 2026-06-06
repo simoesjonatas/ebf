@@ -22,10 +22,11 @@ body {
     flex-direction: column;
     font-family: var(--ebf-font-sans);
     font-size: var(--ebf-fs-base);
+    font-weight: 500;
     line-height: var(--ebf-lh-base);
     color: var(--ebf-ink);
     background:
-        radial-gradient(1200px 480px at 50% -120px, var(--ebf-bg-tint), transparent 70%),
+        radial-gradient(1100px 520px at 50% -140px, var(--ebf-bg-tint), transparent 70%),
         var(--ebf-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -33,12 +34,16 @@ body {
 }
 
 /* ---- Tipografia --------------------------------------------------------- */
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: var(--ebf-font-display);
     color: var(--ebf-ink);
     font-weight: 700;
     line-height: var(--ebf-lh-tight);
-    letter-spacing: -.01em;
+    letter-spacing: 0;
 }
+/* Títulos de destaque ganham a cor azul da marca, como no material Kids */
+.title-brand { color: var(--ebf-primary-dark); }
 
 p {
     color: var(--ebf-ink-soft);

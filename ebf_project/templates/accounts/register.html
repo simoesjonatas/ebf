@@ -1,68 +1,69 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Registrar - EBF PIBVP{% endblock %}
+{% block body_class %}auth-page{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h4 class="card-title mb-0"><i class="bi bi-person-plus"></i> Registrar como Responsável</h4>
+<div class="auth-card card">
+    <div class="card-body">
+        <img src="{% static 'img/logo.png' %}" alt="PIBVP Kids" class="auth-logo" onerror="this.style.display='none'">
+        <img src="{% static 'img/theozinho.png' %}" alt="Theozinho, mascote do PIBVP Kids"
+             class="theo-mascote" onerror="this.style.display='none'">
+        <h1 class="h3 text-center title-brand mb-1">Criar conta</h1>
+        <p class="text-center text-muted mb-4">Cadastre-se como responsável</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="{{ form.nome_completo.id_for_label }}" class="form-label">{{ form.nome_completo.label }}</label>
+                {{ form.nome_completo }}
             </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="{{ form.nome_completo.id_for_label }}" class="form-label">{{ form.nome_completo.label }}</label>
-                        {{ form.nome_completo }}
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
-                        {{ form.email }}
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.password1.id_for_label }}" class="form-label">{{ form.password1.label }}</label>
-                        <div class="input-group">
-                            {{ form.password1 }}
-                            <button class="btn btn-outline-secondary js-toggle-password" type="button" data-target="{{ form.password1.id_for_label }}" aria-label="Visualizar senha">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-                        <small class="form-text text-muted d-block mt-2">
-                            • Mínimo 8 caracteres<br>
-                            • Não pode ser muito similar aos seus dados<br>
-                            • Não pode ser apenas números
-                        </small>
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.password2.id_for_label }}" class="form-label">{{ form.password2.label }}</label>
-                        <div class="input-group">
-                            {{ form.password2 }}
-                            <button class="btn btn-outline-secondary js-toggle-password" type="button" data-target="{{ form.password2.id_for_label }}" aria-label="Visualizar senha">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-check mb-3">
-                        {{ form.aceite_termos }}
-                        <label class="form-check-label" for="{{ form.aceite_termos.id_for_label }}">
-                            Li e aceito os
-                            <a href="{% url 'core:termos_uso' %}" target="_blank" rel="noopener">Termos de Uso e Política de Privacidade/LGPD</a>.
-                        </label>
-                        {% for error in form.aceite_termos.errors %}
-                            <div class="text-danger small mt-1">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success btn-lg">Registrar</button>
-                    </div>
-                </form>
-                <hr>
-                <p class="text-center">
-                    Já tem conta? <a href="{% url 'accounts:login' %}">Faça login aqui</a>
-                </p>
+            <div class="mb-3">
+                <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                {{ form.email }}
             </div>
-        </div>
+            <div class="mb-3">
+                <label for="{{ form.password1.id_for_label }}" class="form-label">{{ form.password1.label }}</label>
+                <div class="input-group">
+                    {{ form.password1 }}
+                    <button class="btn btn-outline-secondary js-toggle-password" type="button" data-target="{{ form.password1.id_for_label }}" aria-label="Visualizar senha">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <small class="form-text text-muted d-block mt-2">
+                    • Mínimo 8 caracteres<br>
+                    • Não pode ser muito similar aos seus dados<br>
+                    • Não pode ser apenas números
+                </small>
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.password2.id_for_label }}" class="form-label">{{ form.password2.label }}</label>
+                <div class="input-group">
+                    {{ form.password2 }}
+                    <button class="btn btn-outline-secondary js-toggle-password" type="button" data-target="{{ form.password2.id_for_label }}" aria-label="Visualizar senha">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="form-check mb-3">
+                {{ form.aceite_termos }}
+                <label class="form-check-label" for="{{ form.aceite_termos.id_for_label }}">
+                    Li e aceito os
+                    <a href="{% url 'core:termos_uso' %}" target="_blank" rel="noopener">Termos de Uso e Política de Privacidade/LGPD</a>.
+                </label>
+                {% for error in form.aceite_termos.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success btn-lg">Registrar</button>
+            </div>
+        </form>
+        <hr>
+        <p class="text-center mb-0">
+            Já tem conta? <a href="{% url 'accounts:login' %}">Faça login aqui</a>
+        </p>
     </div>
 </div>
 {% endblock %}

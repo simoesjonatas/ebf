@@ -4,9 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0e4d5e">
+    <meta name="theme-color" content="#14a9e8">
     <meta name="description" content="EBF PIBVP — sistema de cadastro, presença e retirada de crianças.">
     <title>{% block title %}EBF PIBVP{% endblock %}</title>
+
+    {# Favicon (mãozinha PIBVP Kids) #}
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'img/favicon-48.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
 
     {# Evita "piscar" no tema escuro: aplica a preferência salva antes da pintura #}
     <script>
@@ -28,9 +32,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    {# Fonte Inter — tipografia moderna #}
+    {# Fontes Kids: Baloo 2 (títulos arredondados) + Nunito (corpo legível) #}
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+          href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap">
 
     {# Bootstrap + ícones (base) #}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -46,14 +50,15 @@
 
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg app-navbar">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'core:home' %}">
-                <i class="bi bi-house-heart"></i> EBF PIBVP
+                <img src="{% static 'img/logo-extra.png' %}" alt="" class="brand-logo">
+                EBF PIBVP
             </a>
             <button class="navbar-toggler ebf-burger" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu de navegação">
@@ -77,8 +82,8 @@
                         {% endif %}
                         {% if is_responsavel_user %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'responsaveis:minhas_criancas' %}">Crianças</a></li>
-                        {% else %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'responsaveis:ativar' %}">Ser responsável</a></li>
+                        {% comment %} {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'responsaveis:ativar' %}">Ser responsável</a></li> {% endcomment %}
                         {% endif %}
                         {% if user_profile.is_recepcao %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'criancas:buscar' %}">Pesquisar criança</a></li>
@@ -96,6 +101,7 @@
                             <li class="nav-item"><a class="nav-link" href="{% url 'criancas:buscar' %}">Pesquisar criança</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'presencas:leitura_qr_checkin' %}">Check-in</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'presencas:leitura_qr_checkout' %}">Check-out</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'etiquetas:listar_etiquetas_dia' %}">Etiquetas</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'turmas:listar' %}">Turmas</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'accounts:staff_list' %}">Staff</a></li>

@@ -55,7 +55,10 @@ def home(request):
         
         elif perfil.is_coordenacao() or perfil.is_admin():
             from dashboard.views import get_dashboard_stats
-            context.update(get_dashboard_stats())
+            # Aninha em 'stats' (como o template espera). Usar context.update
+            # espalharia as chaves no topo e sobrescreveria 'total_criancas'
+            # da seção de responsável.
+            context['stats'] = get_dashboard_stats()
     
     except Exception:
         context['tipo_perfil'] = 'anonimo'

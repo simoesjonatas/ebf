@@ -40,8 +40,10 @@ class ResponsavelRegisterForm(UserCreationForm):
         self.fields['password2'].widget.attrs.update({'class': 'form-control'})
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        # Normaliza para minúsculas: o e-mail é gravado sempre em lowercase,
+        # garantindo que o login funcione independentemente do case digitado.
+        email = (self.cleaned_data.get('email') or '').strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("Este e-mail já está cadastrado.")
         return email
 
@@ -66,6 +68,11 @@ class UserLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'E-mail'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Senha'}))
 
+    def clean_email(self):
+        # Aceita o e-mail em qualquer combinação de maiúsculas/minúsculas e o
+        # normaliza para lowercase antes da busca no login.
+        return (self.cleaned_data.get('email') or '').strip().lower()
+
 
 class StyledPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(
@@ -76,6 +83,11 @@ class StyledPasswordResetForm(PasswordResetForm):
             'autocomplete': 'email',
         })
     )
+
+    def clean_email(self):
+        # Normaliza para minúsculas; a busca por usuários (get_users) já é
+        # case-insensitive no Django, então a redefinição encontra a conta.
+        return (self.cleaned_data.get('email') or '').strip().lower()
 
 
 class StyledSetPasswordForm(SetPasswordForm):
@@ -146,8 +158,10 @@ class StaffRegisterForm(UserCreationForm):
         self.fields['password2'].widget.attrs.update({'class': 'form-control'})
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        # Normaliza para minúsculas: o e-mail é gravado sempre em lowercase,
+        # garantindo que o login funcione independentemente do case digitado.
+        email = (self.cleaned_data.get('email') or '').strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("Este e-mail já está cadastrado.")
         return email
 

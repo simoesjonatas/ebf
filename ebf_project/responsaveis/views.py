@@ -110,10 +110,18 @@ def detalhe_crianca(request, crianca_id):
         return redirect('responsaveis:minhas_criancas')
     
     qr_code = generate_qr_code(get_qr_payload('crianca', crianca.token_qr))
-    
+
+    # Histórico dos dias em que a criança entrou/saiu (mais recentes primeiro)
+    historico_presencas = (
+        PresencaDiaria.objects
+        .filter(crianca=crianca, status__in=['PRESENTE', 'RETIRADA'])
+        .order_by('-data')[:30]
+    )
+
     context = {
         'crianca': crianca,
         'qr_code': qr_code,
+        'historico_presencas': historico_presencas,
         'responsaveis_vinculados': CriancaResponsavel.objects.filter(
             crianca=crianca,
             ativo=True

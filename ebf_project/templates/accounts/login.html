@@ -1,15 +1,17 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Login - EBF PIBVP{% endblock %}
+{% block body_class %}auth-page{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="card-title mb-0"><i class="bi bi-box-arrow-in-right"></i> Login</h4>
-            </div>
-            <div class="card-body">
+<div class="auth-card card">
+    <div class="card-body">
+        <img src="{% static 'img/logo.png' %}" alt="PIBVP Kids" class="auth-logo" onerror="this.style.display='none'">
+        <img src="{% static 'img/theozinho.png' %}" alt="Theozinho, mascote do PIBVP Kids"
+             class="theo-mascote" onerror="this.style.display='none'">
+        <h1 class="h3 text-center title-brand mb-1">Bem-vindo!</h1>
+        <p class="text-center text-muted mb-4">Entre para continuar no EBF PIBVP</p>
                 {% if login_error %}
                     <div class="alert alert-danger d-flex gap-2 align-items-start" role="alert">
                         <i class="bi bi-exclamation-triangle-fill mt-1"></i>
@@ -42,11 +44,9 @@
                     </div>
                 </form>
                 <hr>
-                <p class="text-center">
+                <p class="text-center mb-0">
                     Não tem conta? <a href="{% url 'accounts:register' %}">Registre-se aqui</a>
                 </p>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}

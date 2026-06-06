@@ -3,10 +3,14 @@
 {% block title %}Home - EBF PIBVP{% endblock %}
 
 {% block content %}
-<div class="hero-panel mb-4">
-    <div class="eyebrow">EBF PIBVP</div>
-    <h1 class="h2 mb-2">Controle de crianças, presença e retirada</h1>
-    <p class="mb-0">Acesse rapidamente a área de família ou as ferramentas operacionais do seu perfil.</p>
+{% load static %}
+<div class="hero-panel hero-with-mascote mb-4">
+    <div class="hero-content">
+        <div class="eyebrow">EBF PIBVP</div>
+        <h1 class="h2 mb-2">Controle de crianças, presença e retirada</h1>
+        <p class="mb-0">Acesse rapidamente a área de família ou as ferramentas operacionais do seu perfil.</p>
+    </div>
+    <img src="{% static 'img/theozinho2.png' %}" alt="" class="hero-mascote" onerror="this.style.display='none'">
 </div>
 
 {% if user.is_authenticated %}

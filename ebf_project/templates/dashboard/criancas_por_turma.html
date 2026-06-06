@@ -3,27 +3,58 @@
 {% block title %}Crianças por turma - EBF PIBVP{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0">Crianças por turma</h1>
-    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">Voltar</a>
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <span class="icon-badge"><i class="bi bi-collection-fill"></i></span>
+        <div>
+            <div class="eyebrow">Relatório</div>
+            <h1 class="h3 mb-0">Crianças por turma</h1>
+        </div>
+    </div>
+    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
 </div>
+
 <div class="row g-4">
     {% for turma in turmas %}
-    <div class="col-md-6 col-xl-4">
-        <div class="card stat-card h-100">
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card h-100">
             <div class="card-body">
                 <div class="eyebrow">{{ turma.faixa_etaria }}</div>
-                <h2 class="h5">{{ turma.nome }}</h2>
-                <p class="text-muted mb-3"><i class="bi bi-geo-alt"></i> {{ turma.sala_local }}</p>
-                <div class="d-flex justify-content-between">
-                    <div><div class="stat-value text-primary">{{ turma.total }}</div><small>Total</small></div>
-                    <div><div class="stat-value text-success">{{ turma.presentes_hoje }}</div><small>Hoje</small></div>
+                <h2 class="h5 mb-1">{{ turma.nome }}</h2>
+                <p class="text-muted small mb-3"><i class="bi bi-geo-alt"></i> {{ turma.sala_local }}</p>
+
+                <div class="d-flex justify-content-between text-center mb-3">
+                    <div>
+                        <div class="stat-value" style="font-size: 1.8rem;">{{ turma.total }}</div>
+                        <div class="eyebrow">Total</div>
+                    </div>
+                    <div>
+                        <div class="stat-value" style="font-size: 1.8rem; color: var(--ebf-success);">{{ turma.presentes_hoje }}</div>
+                        <div class="eyebrow">Hoje</div>
+                    </div>
+                    <div>
+                        <div class="stat-value" style="font-size: 1.8rem; color: var(--ebf-accent);">{{ turma.percentual }}%</div>
+                        <div class="eyebrow">Presença</div>
+                    </div>
+                </div>
+
+                <div class="progress-kids" role="progressbar"
+                     aria-valuenow="{{ turma.percentual }}" aria-valuemin="0" aria-valuemax="100"
+                     aria-label="Presença da turma {{ turma.nome }}">
+                    <span style="width: {{ turma.percentual }}%;"></span>
                 </div>
             </div>
         </div>
     </div>
     {% empty %}
-    <div class="col-12"><div class="empty-state">Nenhuma turma cadastrada.</div></div>
+    <div class="col-12">
+        <div class="empty-state">
+            <i class="bi bi-inbox d-block mb-2"></i>
+            Nenhuma turma cadastrada.
+        </div>
+    </div>
     {% endfor %}
 </div>
 {% endblock %}

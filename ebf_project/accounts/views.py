@@ -187,19 +187,18 @@ def login_view(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            
-            try:
-                user = User.objects.get(email=email)
+
+            # Busca case-insensitive: o formulário já normalizou para lowercase,
+            # e o iexact também encontra contas antigas gravadas com case misto.
+            user = User.objects.filter(email__iexact=email).first()
+            if user is not None:
                 user_auth = authenticate(request, username=user.username, password=password)
-                
                 if user_auth is not None:
                     login(request, user_auth)
                     messages.success(request, f'Bem-vindo, {user.first_name}!')
                     return redirect('core:home')
-                else:
-                    login_error = 'E-mail ou senha incorretos. Confira os dados e tente novamente.'
-            except User.DoesNotExist:
-                login_error = 'E-mail ou senha incorretos. Confira os dados e tente novamente.'
+
+            login_error = 'E-mail ou senha incorretos. Confira os dados e tente novamente.'
     else:
         form = UserLoginForm()
     

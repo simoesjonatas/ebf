@@ -1,0 +1,30 @@
+IMAGENS DA IDENTIDADE VISUAL — PIBVP KIDS
+==========================================
+
+Todas as imagens foram otimizadas (redimensionadas + comprimidas) para a web.
+Os arquivos originais em alta resolução ficam em: static/img/_originais/
+
+ARQUIVOS E ONDE SÃO USADOS
+--------------------------
+1) logo.png            (wordmark "PIBVP kids")
+   -> Topo dos cards de login, cadastro e redefinição de senha (.auth-logo)
+
+2) logo-extra.png      (símbolo da mãozinha sorridente)
+   -> Selo branco na navbar (.brand-logo) e base do favicon
+
+3) theozinho.png       (mascote acenando, busto)
+   -> Mascote nas telas de autenticação (.theo-mascote)
+
+4) theozinho2.png      (mascote corpo inteiro apontando)
+   -> Destaque no hero da home (.hero-mascote)
+
+5) favicon-48.png / apple-touch-icon.png
+   -> Ícones do site (gerados a partir da mãozinha), referenciados no base.html
+
+COMO USAR EM OUTROS TEMPLATES
+-----------------------------
+No topo do template:   {% load static %}
+Na imagem:             <img src="{% static 'img/theozinho.png' %}" alt="Theozinho">
+
+Para re-otimizar após substituir um original, use Pillow (resize + optimize=True).
+Em produção, após adicionar/trocar imagens:  python manage.py collectstatic

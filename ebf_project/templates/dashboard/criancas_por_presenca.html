@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <span class="icon-badge {{ icone_cor }}"><i class="bi {{ icone }}"></i></span>
+        <div>
+            <div class="eyebrow">{{ eyebrow }}</div>
+            <h1 class="h3 mb-0">{{ titulo }}</h1>
+        </div>
+    </div>
+    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+
+<!-- Filtros -->
+<form class="card card-body mb-4" method="get">
+    <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-5">
+            <label class="form-label" for="q">Nome da criança</label>
+            <input id="q" class="form-control" type="search" name="q" value="{{ termo }}" placeholder="Digite o nome...">
+        </div>
+        <div class="col-12 col-md-4">
+            <label class="form-label" for="turma">Turma</label>
+            <select id="turma" class="form-select" name="turma">
+                <option value="">Todas as turmas</option>
+                {% for t in turmas %}
+                    <option value="{{ t.id }}" {% if turma_id == t.id|stringformat:'s' %}selected{% endif %}>{{ t.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12 col-md-3 d-flex gap-2">
+            <button class="btn btn-primary flex-grow-1" type="submit"><i class="bi bi-funnel"></i> Filtrar</button>
+            {% if termo or turma_id %}
+                <a class="btn btn-outline-secondary" href="{% url url_atual %}" title="Limpar filtros"><i class="bi bi-x-lg"></i></a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <p class="eyebrow mb-0">{{ total }} criança{{ total|pluralize }}</p>
+</div>
+
+<!-- Cards -->
+<div class="row g-3">
+    {% for p in presencas %}
+    <div class="col-12 col-sm-6 col-lg-4">
+        <a href="{% url 'criancas:detalhe_staff' p.crianca.id %}" class="quick-card h-100">
+            <div class="d-flex align-items-center gap-3">
+                {% if p.status == 'RETIRADA' %}
+                    <span class="icon-badge is-orange"><i class="bi bi-box-arrow-right"></i></span>
+                {% else %}
+                    <span class="icon-badge is-green"><i class="bi bi-person-check-fill"></i></span>
+                {% endif %}
+                <div class="flex-grow-1" style="min-width: 0;">
+                    <h2 class="h6 mb-1 text-truncate">{{ p.crianca.nome_completo }}</h2>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <span class="badge bg-primary">{% if p.crianca.turma %}{{ p.crianca.turma.nome }}{% else %}Sem turma{% endif %}</span>
+                        <span class="small text-muted"><i class="bi bi-box-arrow-in-right text-success"></i> {{ p.horario_checkin|date:"H:i"|default:"-" }}</span>
+                        {% if mostrar_checkout and p.status == 'RETIRADA' %}
+                            <span class="small text-muted"><i class="bi bi-box-arrow-right text-warning"></i> {{ p.horario_checkout|date:"H:i"|default:"-" }}</span>
+                        {% endif %}
+                    </div>
+                    {% if mostrar_alergias and p.crianca.alergias %}
+                        <span class="tag-soft is-danger mt-2" style="font-size: .72rem;">
+                            <i class="bi bi-bandaid"></i> {{ p.crianca.alergias }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="empty-state">
+            <i class="bi bi-emoji-smile d-block mb-2"></i>
+            {% if termo or turma_id %}
+                Nenhuma criança encontrada com esses filtros.
+            {% else %}
+                {{ vazio }}
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Paginação (preserva os filtros) -->
+{% if page_obj.has_other_pages %}
+<nav aria-label="Paginação" class="mt-4">
+    <ul class="pagination justify-content-center mb-0">
+        <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+            <a class="page-link" href="?q={{ termo|urlencode }}&turma={{ turma_id }}&page={{ page_obj.previous_page_number }}" aria-label="Página anterior"><i class="bi bi-chevron-left"></i></a>
+        </li>
+        {% for num in paginator.page_range %}
+            {% if num == page_obj.number %}
+                <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+            {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                <li class="page-item"><a class="page-link" href="?q={{ termo|urlencode }}&turma={{ turma_id }}&page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+        <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+            <a class="page-link" href="?q={{ termo|urlencode }}&turma={{ turma_id }}&page={{ page_obj.next_page_number }}" aria-label="Próxima página"><i class="bi bi-chevron-right"></i></a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

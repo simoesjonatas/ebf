@@ -32,6 +32,9 @@ db.sqlite3-journal
 /static
 .env
 
+# Uploads de fotos de crianças (dados sensíveis — não versionar)
+ebf_project/media/criancas/
+
 # IDE
 .vscode/
 .idea/

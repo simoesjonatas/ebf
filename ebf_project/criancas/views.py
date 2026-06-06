@@ -67,6 +67,12 @@ def detalhe_crianca_staff(request, crianca_id):
     hoje = date.today()
     from presencas.models import PresencaDiaria
     presenca_hoje = PresencaDiaria.objects.filter(crianca=crianca, data=hoje).first()
+    # Histórico dos dias em que a criança entrou/saiu (mais recentes primeiro)
+    historico_presencas = (
+        PresencaDiaria.objects
+        .filter(crianca=crianca, status__in=['PRESENTE', 'RETIRADA'])
+        .order_by('-data')[:30]
+    )
     responsaveis = (
         CriancaResponsavel.objects
         .filter(crianca=crianca, ativo=True)
@@ -85,6 +91,7 @@ def detalhe_crianca_staff(request, crianca_id):
     return render(request, 'criancas/detalhe_staff.html', {
         'crianca': crianca,
         'presenca_hoje': presenca_hoje,
+        'historico_presencas': historico_presencas,
         'responsaveis': responsaveis,
     })
 

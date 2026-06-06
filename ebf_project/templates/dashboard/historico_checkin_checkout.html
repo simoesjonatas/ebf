@@ -3,40 +3,77 @@
 {% block title %}Histórico de check-in/out - EBF PIBVP{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0">Histórico de check-in e check-out</h1>
-    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">Voltar</a>
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <span class="icon-badge is-info"><i class="bi bi-clock-history"></i></span>
+        <div>
+            <div class="eyebrow">Relatório</div>
+            <h1 class="h3 mb-0">Histórico de check-in e check-out</h1>
+        </div>
+    </div>
+    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
 </div>
+
 <form class="card card-body mb-4" method="get">
     <div class="row g-3 align-items-end">
-        <div class="col-md-4">
-            <label class="form-label">Data</label>
-            <input class="form-control" type="date" name="data" value="{{ data_filtro|date:'Y-m-d' }}">
+        <div class="col-12 col-md-4">
+            <label class="form-label" for="data">Data</label>
+            <input id="data" class="form-control" type="date" name="data" value="{{ data_filtro|date:'Y-m-d' }}">
         </div>
-        <div class="col-md-3">
-            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Filtrar</button>
+        <div class="col-12 col-md-3">
+            <button class="btn btn-primary w-100" type="submit"><i class="bi bi-search"></i> Filtrar</button>
         </div>
     </div>
 </form>
+
 <div class="card">
-    <div class="card-body table-responsive">
-        <table class="table align-middle">
-            <thead><tr><th>Criança</th><th>Status</th><th>Check-in</th><th>Recepção</th><th>Check-out</th><th>Responsável retirada</th></tr></thead>
-            <tbody>
-                {% for presenca in presencas %}
-                <tr>
-                    <td>{{ presenca.crianca.nome_completo }}</td>
-                    <td>{{ presenca.get_status_display }}</td>
-                    <td>{{ presenca.horario_checkin|date:"H:i"|default:"-" }}</td>
-                    <td>{% if presenca.usuario_checkin %}{{ presenca.usuario_checkin.get_full_name|default:presenca.usuario_checkin.username }}{% else %}-{% endif %}</td>
-                    <td>{{ presenca.horario_checkout|date:"H:i"|default:"-" }}</td>
-                    <td>{% if presenca.responsavel_checkout %}{{ presenca.responsavel_checkout.nome_completo }}{% else %}-{% endif %}</td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="6" class="text-center text-muted py-4">Nenhum histórico encontrado.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <span><i class="bi bi-list-check text-primary"></i> Movimentações de {{ data_filtro|date:"d/m/Y" }}</span>
+        <span class="badge bg-primary">{{ presencas|length }}</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Criança</th><th>Status</th>
+                        <th class="text-center">Check-in</th><th>Recepção</th>
+                        <th class="text-center">Check-out</th><th>Responsável retirada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for presenca in presencas %}
+                    <tr>
+                        <td class="ps-3"><strong>{{ presenca.crianca.nome_completo }}</strong></td>
+                        <td>
+                            {% if presenca.status == 'PRESENTE' %}
+                                <span class="badge bg-success">Presente</span>
+                            {% elif presenca.status == 'RETIRADA' %}
+                                <span class="badge bg-warning">Retirada</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ presenca.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">{{ presenca.horario_checkin|date:"H:i"|default:"-" }}</td>
+                        <td>{% if presenca.usuario_checkin %}{{ presenca.usuario_checkin.get_full_name|default:presenca.usuario_checkin.username }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                        <td class="text-center">{{ presenca.horario_checkout|date:"H:i"|default:"-" }}</td>
+                        <td>{% if presenca.responsavel_checkout %}{{ presenca.responsavel_checkout.nome_completo }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state my-2">
+                                <i class="bi bi-clock d-block mb-2"></i>
+                                Nenhum histórico encontrado para esta data.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
