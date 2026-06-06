@@ -10,6 +10,12 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://ebf.simoesti.com.br',
+    'https://www.ebf.simoesti.com.br',
+    'https://ebf.pibvp.org.br',
+    'https://www.ebf.pibvp.org.br',
+]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
