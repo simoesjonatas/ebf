@@ -71,53 +71,57 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     {% if user.is_authenticated %}
-                        {% if user_profile %}
-                            <li class="nav-item">
-                                <span class="navbar-user nav-link">
-                                    <i class="bi bi-person-circle"></i>
-                                    {{ user.first_name|default:user.username }}
-                                    <span class="badge-role">{{ user_profile.get_tipo_perfil_display }}</span>
-                                </span>
-                            </li>
-                        {% endif %}
-                        {% if is_responsavel_user %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'responsaveis:minhas_criancas' %}">Crianças</a></li>
-                        {% comment %} {% else %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'responsaveis:ativar' %}">Ser responsável</a></li> {% endcomment %}
-                        {% endif %}
-                        {% if user_profile.is_recepcao %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'criancas:buscar' %}">Pesquisar criança</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'presencas:leitura_qr_checkin' %}">Check-in</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'presencas:leitura_qr_checkout' %}">Check-out</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'etiquetas:listar_etiquetas_dia' %}">Etiquetas</a></li>
-                        {% elif user_profile.is_checkin %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'criancas:buscar' %}">Pesquisar criança</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'presencas:leitura_qr_checkin' %}">Check-in</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'etiquetas:listar_etiquetas_dia' %}">Etiquetas</a></li>
-                        {% elif user_profile.is_checkout %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'criancas:buscar' %}">Pesquisar criança</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'presencas:leitura_qr_checkout' %}">Check-out</a></li>
-                        {% elif user_profile.is_coordenacao or user_profile.is_admin %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'criancas:buscar' %}">Pesquisar criança</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'presencas:leitura_qr_checkin' %}">Check-in</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'presencas:leitura_qr_checkout' %}">Check-out</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'etiquetas:listar_etiquetas_dia' %}">Etiquetas</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'turmas:listar' %}">Turmas</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'accounts:staff_list' %}">Staff</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'accounts:responsaveis_list' %}">Responsáveis</a></li>
-                        {% elif user_profile.is_professor %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'criancas:buscar' %}">Pesquisar criança</a></li>
-                        {% endif %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:profile' %}">
-                                <i class="bi bi-person-circle"></i> Perfil
+                        {# Operação: pesquisar, check-in/out e etiquetas #}
+                        {% if user_profile.is_recepcao or user_profile.is_checkin or user_profile.is_checkout or user_profile.is_professor or user_profile.is_coordenacao or user_profile.is_admin %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuOperacao" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-qr-code-scan"></i> Operação
                             </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuOperacao">
+                                <li><a class="dropdown-item" href="{% url 'criancas:buscar' %}"><i class="bi bi-search"></i> Pesquisar criança</a></li>
+                                {% if user_profile.is_recepcao or user_profile.is_checkin or user_profile.is_coordenacao or user_profile.is_admin %}
+                                <li><a class="dropdown-item" href="{% url 'presencas:leitura_qr_checkin' %}"><i class="bi bi-box-arrow-in-right"></i> Check-in</a></li>
+                                {% endif %}
+                                {% if user_profile.is_recepcao or user_profile.is_checkout or user_profile.is_coordenacao or user_profile.is_admin %}
+                                <li><a class="dropdown-item" href="{% url 'presencas:leitura_qr_checkout' %}"><i class="bi bi-box-arrow-right"></i> Check-out</a></li>
+                                {% endif %}
+                                {% if user_profile.is_recepcao or user_profile.is_checkin or user_profile.is_coordenacao or user_profile.is_admin %}
+                                <li><a class="dropdown-item" href="{% url 'etiquetas:listar_etiquetas_dia' %}"><i class="bi bi-printer"></i> Etiquetas</a></li>
+                                {% endif %}
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:logout' %}">
-                                <i class="bi bi-box-arrow-right"></i> Sair
+                        {% endif %}
+
+                        {# Gestão: dashboard, turmas, staff e responsáveis #}
+                        {% if user_profile.is_coordenacao or user_profile.is_admin %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuGestao" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-sliders"></i> Gestão
                             </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuGestao">
+                                <li><a class="dropdown-item" href="{% url 'dashboard:dashboard' %}"><i class="bi bi-graph-up-arrow"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{% url 'turmas:listar' %}"><i class="bi bi-grid-3x3-gap"></i> Turmas</a></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:staff_list' %}"><i class="bi bi-person-badge"></i> Staff</a></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:responsaveis_list' %}"><i class="bi bi-people"></i> Responsáveis</a></li>
+                            </ul>
+                        </li>
+                        {% endif %}
+
+                        {# Menu do usuário #}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle navbar-user" href="#" id="menuUsuario" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                                {{ user.first_name|default:user.username }}
+                                {% if user_profile %}<span class="badge-role">{{ user_profile.get_tipo_perfil_display }}</span>{% endif %}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuUsuario">
+                                {% if is_responsavel_user %}
+                                <li><a class="dropdown-item" href="{% url 'responsaveis:minhas_criancas' %}"><i class="bi bi-emoji-smile"></i> Minhas crianças</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person-circle"></i> Meu perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right"></i> Sair</a></li>
+                            </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">

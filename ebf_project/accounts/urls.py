@@ -11,6 +11,7 @@ urlpatterns = [
     path('staff/register/', views.register_staff, name='staff_register'),
     path('staff/<uuid:perfil_id>/funcao/', views.alterar_funcao_staff, name='staff_role_update'),
     path('responsaveis/', views.listar_responsaveis, name='responsaveis_list'),
+    path('responsaveis/<uuid:perfil_id>/funcao/', views.alterar_perfil_responsavel, name='responsavel_role_update'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path(

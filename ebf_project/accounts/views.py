@@ -10,7 +10,7 @@ from django.urls import reverse
 from datetime import date
 from core.decorators import coordenacao_requerida
 from core.utils import generate_qr_code, get_qr_payload
-from .forms import ResponsavelRegisterForm, StaffRegisterForm, StaffRoleForm, UserLoginForm, PerfilForm
+from .forms import ResponsavelRegisterForm, StaffRegisterForm, StaffRoleForm, UserLoginForm, PerfilForm, STAFF_PROFILE_CHOICES
 from .models import Perfil
 from responsaveis.models import Responsavel
 from criancas.models import Crianca
@@ -18,6 +18,10 @@ from presencas.models import PresencaDiaria
 
 
 STAFF_PROFILE_TYPES = ['recepcao', 'checkin', 'professor', 'checkout', 'coordenacao', 'admin']
+
+# Opções de função para promover/rebaixar um responsável (inclui voltar a "só responsável")
+FUNCAO_CHOICES = [('responsavel', 'Somente responsável')] + STAFF_PROFILE_CHOICES
+FUNCAO_VALIDAS = {valor for valor, _ in FUNCAO_CHOICES}
 
 
 def register_responsavel(request):
@@ -173,7 +177,35 @@ def listar_responsaveis(request):
         'responsaveis': page_obj.object_list,
         'page_obj': page_obj,
         'paginator': paginator,
+        'funcao_choices': FUNCAO_CHOICES,
     })
+
+
+@coordenacao_requerida
+@require_http_methods(["POST"])
+def alterar_perfil_responsavel(request, perfil_id):
+    """Promove um responsável a staff (ou volta para 'somente responsável'),
+    alterando o tipo_perfil. O vínculo de responsável é mantido."""
+    perfil = Perfil.objects.select_related('usuario').filter(id=perfil_id).first()
+    if not perfil:
+        messages.error(request, 'Usuário não encontrado.')
+        return redirect('accounts:responsaveis_list')
+
+    novo = request.POST.get('tipo_perfil', '')
+    if novo not in FUNCAO_VALIDAS:
+        messages.error(request, 'Função inválida.')
+    elif perfil.usuario_id == request.user.id and novo not in ['coordenacao', 'admin']:
+        messages.error(request, 'Você não pode rebaixar a sua própria conta. Peça a outro coordenador/admin.')
+    else:
+        anterior = perfil.get_tipo_perfil_display()
+        perfil.tipo_perfil = novo
+        perfil.save()
+        nome = perfil.usuario.get_full_name() or perfil.usuario.email
+        messages.success(request, f'{nome}: função alterada de {anterior} para {perfil.get_tipo_perfil_display()}.')
+
+    querystring = request.GET.urlencode()
+    destino = reverse('accounts:responsaveis_list')
+    return redirect(f'{destino}?{querystring}' if querystring else destino)
 
 
 def login_view(request):

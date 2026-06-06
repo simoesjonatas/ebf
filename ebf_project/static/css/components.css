@@ -493,3 +493,7 @@ a.kpi-link:hover .kpi-link-arrow { transform: translateX(3px); color: var(--ebf-
     background: var(--ebf-primary-soft);
     color: var(--ebf-primary-dark);
 }
+.dropdown-item i { display: inline-block; width: 1.3rem; text-align: center; }
+.dropdown-divider { border-top-color: var(--ebf-border); }
+/* Largura mínima dos menus da navbar para os itens respirarem */
+.app-navbar .dropdown-menu { min-width: 220px; }

@@ -45,6 +45,7 @@
                     <th>Crianças</th>
                     <th>Tipo de usuário</th>
                     <th>Status</th>
+                    <th>Função / acesso</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,9 +81,26 @@
                             <small class="text-danger d-block">Não autoriza imagem</small>
                         {% endif %}
                     </td>
+                    <td>
+                        {% if responsavel.usuario.perfil.id %}
+                        <form method="post"
+                              action="{% url 'accounts:responsavel_role_update' responsavel.usuario.perfil.id %}?q={{ termo|urlencode }}&page={{ page_obj.number }}"
+                              class="d-flex gap-1">
+                            {% csrf_token %}
+                            <select name="tipo_perfil" class="form-select form-select-sm" style="min-width: 150px;" aria-label="Função do usuário">
+                                {% for valor, rotulo in funcao_choices %}
+                                    <option value="{{ valor }}" {% if responsavel.usuario.perfil.tipo_perfil == valor %}selected{% endif %}>{{ rotulo }}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-sm btn-primary" type="submit" title="Salvar função"><i class="bi bi-check-lg"></i></button>
+                        </form>
+                        {% else %}
+                            <span class="text-muted small">—</span>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="5" class="text-center text-muted py-4">Nenhum responsável encontrado.</td></tr>
+                <tr><td colspan="6" class="text-center text-muted py-4">Nenhum responsável encontrado.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
