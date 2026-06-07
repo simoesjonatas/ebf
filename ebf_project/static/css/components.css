@@ -239,6 +239,10 @@
     letter-spacing: 0;
 }
 
+/* Stat-card clicável (home) */
+a.stat-link { color: inherit; transition: transform var(--ebf-transition), box-shadow var(--ebf-transition), border-color var(--ebf-transition); }
+a.stat-link:hover { transform: translateY(-3px); box-shadow: var(--ebf-shadow); border-color: var(--ebf-primary); }
+
 /* ---- KPI card (dashboard): ícone colorido + número --------------------- */
 .kpi-card {
     display: flex;

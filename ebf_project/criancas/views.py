@@ -7,9 +7,11 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from core.decorators import responsavel_requerido, perfil_requerido
 from core.utils import registrar_auditoria
+import uuid
 from .models import Crianca, CriancaResponsavel
 from .forms import CriancaForm, CriancaResponsavelForm, CriancaResponsavelPermissoesForm
 from responsaveis.models import Responsavel
+from turmas.models import Turma
 from datetime import date
 
 
@@ -93,7 +95,37 @@ def detalhe_crianca_staff(request, crianca_id):
         'presenca_hoje': presenca_hoje,
         'historico_presencas': historico_presencas,
         'responsaveis': responsaveis,
+        'turmas': Turma.objects.filter(ativa=True).order_by('nome'),
     })
+
+
+@perfil_requerido(['coordenacao', 'admin'])
+@require_POST
+def alterar_turma_crianca(request, crianca_id):
+    """Coordenação/admin pode alterar (sobrescrever) a turma de uma criança."""
+    crianca = get_object_or_404(Crianca, id=crianca_id, ativa=True)
+    turma_id = request.POST.get('turma', '').strip()
+
+    if turma_id:
+        try:
+            uuid.UUID(turma_id)
+        except (ValueError, TypeError):
+            messages.error(request, 'Turma inválida.')
+            return redirect('criancas:detalhe_staff', crianca_id=crianca.id)
+        turma = Turma.objects.filter(id=turma_id, ativa=True).first()
+        if not turma:
+            messages.error(request, 'Turma inválida.')
+            return redirect('criancas:detalhe_staff', crianca_id=crianca.id)
+        crianca.turma = turma
+        msg = f'Turma de {crianca.nome_completo} alterada para {turma.nome}.'
+    else:
+        crianca.turma = None
+        msg = f'Turma de {crianca.nome_completo} removida.'
+
+    crianca.save()
+    registrar_auditoria(request.user, 'ATUALIZAR', 'Crianca', crianca.id, msg)
+    messages.success(request, msg)
+    return redirect('criancas:detalhe_staff', crianca_id=crianca.id)
 
 
 @responsavel_requerido

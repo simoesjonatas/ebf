@@ -45,7 +45,55 @@
     <p class="eyebrow mb-0">{{ total }} criança{{ total|pluralize }}</p>
 </div>
 
-<!-- Cards -->
+{% if permitir_checkout %}
+<!-- Check-out manual (coordenação): seleção + ação em lote -->
+<form method="post" action="{% url 'dashboard:checkout_manual' %}?q={{ termo|urlencode }}&turma={{ turma_id }}"
+      onsubmit="return confirm('Confirmar check-out manual das crianças selecionadas?');">
+    {% csrf_token %}
+    {% if presencas %}
+    <div class="card card-body mb-3 d-flex flex-row flex-wrap align-items-center gap-3">
+        <div class="form-check m-0">
+            <input class="form-check-input" type="checkbox" id="selTodos">
+            <label class="form-check-label fw-semibold" for="selTodos">Selecionar todos</label>
+        </div>
+        <button type="submit" class="btn btn-accent ms-auto">
+            <i class="bi bi-box-arrow-right"></i> Check-out dos selecionados
+        </button>
+    </div>
+    {% endif %}
+
+    <div class="row g-3">
+        {% for p in presencas %}
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="quick-card h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <input class="form-check-input chk-checkout m-0 flex-shrink-0" type="checkbox"
+                           name="presencas" value="{{ p.id }}" aria-label="Selecionar {{ p.crianca.nome_completo }}">
+                    <span class="icon-badge is-green flex-shrink-0"><i class="bi bi-person-check-fill"></i></span>
+                    <div class="flex-grow-1" style="min-width: 0;">
+                        <h2 class="h6 mb-1 text-truncate">{{ p.crianca.nome_completo }}</h2>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge bg-primary">{% if p.crianca.turma %}{{ p.crianca.turma.nome }}{% else %}Sem turma{% endif %}</span>
+                            <span class="small text-muted"><i class="bi bi-box-arrow-in-right text-success"></i> {{ p.horario_checkin|date:"H:i"|default:"-" }}</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'criancas:detalhe_staff' p.crianca.id %}" class="btn btn-sm btn-outline-secondary flex-shrink-0" title="Ver detalhes"><i class="bi bi-eye"></i></a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="bi bi-emoji-smile d-block mb-2"></i>
+                {% if termo or turma_id %}Nenhuma criança encontrada com esses filtros.{% else %}{{ vazio }}{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</form>
+
+{% else %}
+<!-- Cards (somente leitura) -->
 <div class="row g-3">
     {% for p in presencas %}
     <div class="col-12 col-sm-6 col-lg-4">
@@ -87,6 +135,7 @@
     </div>
     {% endfor %}
 </div>
+{% endif %}
 
 <!-- Paginação (preserva os filtros) -->
 {% if page_obj.has_other_pages %}
@@ -107,5 +156,20 @@
         </li>
     </ul>
 </nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if permitir_checkout %}
+<script>
+    (function () {
+        var selTodos = document.getElementById("selTodos");
+        if (!selTodos) return;
+        var itens = document.querySelectorAll(".chk-checkout");
+        selTodos.addEventListener("change", function () {
+            itens.forEach(function (chk) { chk.checked = selTodos.checked; });
+        });
+    })();
+</script>
 {% endif %}
 {% endblock %}

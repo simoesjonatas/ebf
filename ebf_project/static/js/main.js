@@ -7,6 +7,35 @@
 (function () {
     "use strict";
 
+    /* ---- Anti duplo-envio: spinner no botão ao enviar formulário -------- */
+    document.querySelectorAll("form").forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            // Respeita cancelamentos (ex.: confirm() retornou "Cancelar")
+            if (e.defaultPrevented) return;
+            // Formulário pode optar por sair: <form data-no-loading>
+            if (form.hasAttribute("data-no-loading")) return;
+            // Já está enviando? bloqueia novo envio (ex.: tecla Enter repetida)
+            if (form.dataset.loading === "1") { e.preventDefault(); return; }
+
+            var btn = form.querySelector('button[type="submit"], input[type="submit"]');
+            if (!btn) return;
+
+            form.dataset.loading = "1";
+            // Fixa a largura para o botão não "encolher" ao trocar o conteúdo
+            btn.style.minWidth = btn.offsetWidth + "px";
+
+            // Desabilita só no próximo tick, garantindo que o valor do botão
+            // ainda seja enviado junto com o formulário.
+            setTimeout(function () {
+                btn.disabled = true;
+                btn.setAttribute("aria-busy", "true");
+                btn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm align-middle" role="status" aria-hidden="true"></span>' +
+                    ' <span class="align-middle">Aguarde...</span>';
+            }, 0);
+        });
+    });
+
     /* ---- Mostrar / ocultar senha --------------------------------------- */
     document.querySelectorAll(".js-toggle-password").forEach(function (button) {
         button.addEventListener("click", function () {

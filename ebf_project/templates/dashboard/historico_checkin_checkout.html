@@ -22,8 +22,15 @@
             <label class="form-label" for="data">Data</label>
             <input id="data" class="form-control" type="date" name="data" value="{{ data_filtro|date:'Y-m-d' }}">
         </div>
-        <div class="col-12 col-md-3">
-            <button class="btn btn-primary w-100" type="submit"><i class="bi bi-search"></i> Filtrar</button>
+        <div class="col-12 col-md-5">
+            <label class="form-label" for="q">Nome da criança</label>
+            <input id="q" class="form-control" type="search" name="q" value="{{ termo }}" placeholder="Digite o nome...">
+        </div>
+        <div class="col-12 col-md-3 d-flex gap-2">
+            <button class="btn btn-primary flex-grow-1" type="submit"><i class="bi bi-search"></i> Filtrar</button>
+            {% if termo %}
+                <a class="btn btn-outline-secondary" href="?data={{ data_filtro|date:'Y-m-d' }}" title="Limpar nome"><i class="bi bi-x-lg"></i></a>
+            {% endif %}
         </div>
     </div>
 </form>

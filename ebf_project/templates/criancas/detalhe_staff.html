@@ -23,6 +23,25 @@
                 {% endif %}
                 <h2 class="h5">{{ crianca.codigo_interno }}</h2>
                 <p class="text-muted mb-0">{{ crianca.get_idade }} anos · {% if crianca.turma %}{{ crianca.turma.nome }}{% else %}Sem turma{% endif %}</p>
+
+                {% if user_profile.is_coordenacao or user_profile.is_admin %}
+                <hr>
+                <form method="post" action="{% url 'criancas:alterar_turma' crianca.id %}" class="text-start">
+                    {% csrf_token %}
+                    <label class="form-label small fw-semibold" for="turma">
+                        <i class="bi bi-pencil-square"></i> Alterar turma (coordenação)
+                    </label>
+                    <div class="d-flex gap-2">
+                        <select name="turma" id="turma" class="form-select form-select-sm">
+                            <option value="">Sem turma</option>
+                            {% for t in turmas %}
+                                <option value="{{ t.id }}" {% if crianca.turma_id == t.id %}selected{% endif %}>{{ t.nome }} ({{ t.faixa_etaria }})</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-sm btn-primary" type="submit" title="Salvar turma"><i class="bi bi-check-lg"></i></button>
+                    </div>
+                </form>
+                {% endif %}
             </div>
         </div>
     </div>

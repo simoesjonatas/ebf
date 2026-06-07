@@ -153,37 +153,37 @@
 
     {% elif tipo_perfil == 'coordenacao' or tipo_perfil == 'admin' %}
     <div class="row g-4">
-        <div class="col-md-3">
-            <div class="card stat-card h-100">
+        <div class="col-6 col-md-3">
+            <a href="{% url 'dashboard:criancas_ativas' %}" class="card stat-card h-100 text-decoration-none stat-link">
                 <div class="card-body text-center">
                     <div class="eyebrow">Crianças</div>
                     <div class="stat-value text-primary">{{ stats.total_criancas }}</div>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card stat-card h-100">
+        <div class="col-6 col-md-3">
+            <a href="{% url 'dashboard:criancas_presentes' %}" class="card stat-card h-100 text-decoration-none stat-link">
                 <div class="card-body text-center">
                     <div class="eyebrow">Presentes</div>
                     <div class="stat-value text-success">{{ stats.presentes_hoje }}</div>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card stat-card h-100">
+        <div class="col-6 col-md-3">
+            <a href="{% url 'dashboard:criancas_retiradas' %}" class="card stat-card h-100 text-decoration-none stat-link">
                 <div class="card-body text-center">
                     <div class="eyebrow">Retiradas</div>
                     <div class="stat-value text-info">{{ stats.retiradas_hoje }}</div>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card stat-card h-100">
+        <div class="col-6 col-md-3">
+            <a href="{% url 'dashboard:criancas_alergias' %}" class="card stat-card h-100 text-decoration-none stat-link">
                 <div class="card-body text-center">
                     <div class="eyebrow">Alertas</div>
                     <div class="stat-value text-warning">{{ stats.presentes_com_alergia }}</div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 

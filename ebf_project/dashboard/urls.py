@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.dashboard, name='dashboard'),
     path('criancas/', views.criancas_ativas, name='criancas_ativas'),
     path('presentes/', views.criancas_presentes, name='criancas_presentes'),
+    path('presentes/checkout/', views.checkout_manual, name='checkout_manual'),
     path('checkins/', views.criancas_checkins, name='criancas_checkins'),
     path('retiradas/', views.criancas_retiradas, name='criancas_retiradas'),
     path('alergias/', views.criancas_alergias, name='criancas_alergias'),
