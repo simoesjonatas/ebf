@@ -11,9 +11,22 @@
             <p class="text-muted mb-0">QR temporário gerado por {{ responsavel.nome_completo }}. Válido até {{ lote.expira_em|date:"d/m/Y H:i" }}.</p>
         </div>
 
+        {% if criancas_presentes %}
+        <div class="alert alert-success">
+            <strong><i class="bi bi-check2-circle"></i> Já na igreja hoje:</strong>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+                {% for item in criancas_presentes %}
+                    <span class="badge {% if item.status == 'RETIRADA' %}bg-warning{% else %}bg-success{% endif %}">
+                        {{ item.crianca.nome_completo }} · {% if item.status == 'RETIRADA' %}já retirada{% else %}presente{% endif %}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <form method="post" class="card">
             {% csrf_token %}
-            <div class="card-header">Crianças do lote</div>
+            <div class="card-header">Crianças para check-in</div>
             <div class="card-body">
                 <div class="list-group">
                     {% for crianca in criancas %}
@@ -22,11 +35,17 @@
                             <span class="text-muted d-block small">{{ crianca.codigo_interno }} · {% if crianca.turma %}{{ crianca.turma.nome }}{% else %}Sem turma{% endif %}</span>
                         </div>
                     {% empty %}
-                        <div class="empty-state">Nenhuma criança disponível para check-in neste QR.</div>
+                        <div class="empty-state">
+                            {% if criancas_presentes %}
+                                Todas as crianças deste QR já fizeram check-in hoje.
+                            {% else %}
+                                Nenhuma criança disponível para check-in neste QR.
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
             </div>
-            <div class="card-footer bg-white d-flex gap-2">
+            <div class="card-footer d-flex gap-2">
                 <button class="btn btn-accent" type="submit" {% if not criancas %}disabled{% endif %}>
                     <i class="bi bi-check-circle"></i> Confirmar check-in
                 </button>

@@ -1,0 +1,23 @@
+{# Etiqueta térmica 90x29mm. Espera: crianca, qr_code, checkout_token_expira_em #}
+<div class="etiqueta">
+    {% if qr_code %}
+    <div class="etiqueta-qr">
+        <img src="{{ qr_code }}" alt="QR Code de check-out">
+        {% if checkout_token_expira_em %}<small>Check-out até {{ checkout_token_expira_em|date:"H:i" }}</small>{% endif %}
+    </div>
+    {% endif %}
+
+    <div class="etiqueta-info-col">
+        <div class="etiqueta-header">EBF PIBVP</div>
+        <div class="etiqueta-nome">{{ crianca.nome_completo }}</div>
+        <div class="etiqueta-codigo">{{ crianca.codigo_interno }}</div>
+        {% if crianca.tem_observacoes_importantes %}
+        <div class="etiqueta-aviso">⚠ ATENÇÃO: ver observações</div>
+        {% endif %}
+    </div>
+
+    <div class="etiqueta-turma-col">
+        <span class="etiqueta-turma-label">Turma</span>
+        <span class="etiqueta-turma-nome">{% if crianca.turma %}{{ crianca.turma.nome }}{% else %}—{% endif %}</span>
+    </div>
+</div>

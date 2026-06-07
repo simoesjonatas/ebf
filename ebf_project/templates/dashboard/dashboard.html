@@ -64,7 +64,7 @@
 
 <!-- Alertas / atenção -->
 <div class="row g-3 mb-4">
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-md-4">
         <a href="{% url 'dashboard:criancas_alergias' %}" class="kpi-card kpi-yellow is-alert-yellow kpi-link" title="Ver presentes com alergias">
             <div class="kpi-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
             <div class="flex-grow-1">
@@ -74,7 +74,17 @@
             <i class="bi bi-chevron-right kpi-link-arrow"></i>
         </a>
     </div>
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-md-4">
+        <a href="{% url 'dashboard:criancas_ativas' %}?sem_imagem=1" class="kpi-card kpi-info is-alert-info kpi-link" title="Ver crianças sem autorização de imagem">
+            <div class="kpi-icon"><i class="bi bi-camera-video-off-fill"></i></div>
+            <div class="flex-grow-1">
+                <div class="eyebrow">Sem autorização de imagem</div>
+                <div class="stat-value">{{ stats.sem_autorizacao_imagem }}</div>
+            </div>
+            <i class="bi bi-chevron-right kpi-link-arrow"></i>
+        </a>
+    </div>
+    <div class="col-12 col-md-4">
         <a href="{% url 'dashboard:criancas_presentes' %}" class="kpi-card kpi-danger is-alert-danger kpi-link" title="Ver crianças aguardando retirada">
             <div class="kpi-icon"><i class="bi bi-clock-history"></i></div>
             <div class="flex-grow-1">
@@ -114,6 +124,12 @@
         <a href="{% url 'dashboard:historico_checkin_checkout' %}" class="quick-card">
             <i class="bi bi-clock-history"></i>
             <h3 class="h6 mb-0">Histórico</h3>
+        </a>
+    </div>
+    <div class="col-6 col-lg-3">
+        <a href="{% url 'dashboard:criancas_ativas' %}?sem_imagem=1" class="quick-card">
+            <i class="bi bi-camera-video-off"></i>
+            <h3 class="h6 mb-0">Sem autorização de imagem</h3>
         </a>
     </div>
 </div>

@@ -34,6 +34,14 @@ class CriancaForm(forms.ModelForm):
         initial=True,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
+    # Campo extra (não é do modelo Crianca): usado ao criar para registrar o
+    # parentesco do responsável que está cadastrando.
+    parentesco = forms.ChoiceField(
+        choices=[('', 'Selecione...')] + PARENTESCO_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='O que a criança é de você?'
+    )
 
     class Meta:
         model = Crianca
@@ -52,10 +60,15 @@ class CriancaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk:
+        # PK é UUID com default, então instance.pk já vem preenchido mesmo em
+        # objetos novos. O sinal confiável de "edição" é _state.adding=False.
+        editando = self.instance and not self.instance._state.adding
+        if editando:
             self.fields['foto'].required = False
             return
         self.fields['autorizacao_imagem'].initial = True
+        # No cadastro, o parentesco é obrigatório
+        self.fields['parentesco'].required = True
 
     def clean_foto(self):
         foto = self.cleaned_data.get('foto')

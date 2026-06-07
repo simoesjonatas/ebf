@@ -46,6 +46,7 @@ def get_dashboard_stats():
         'dentro_da_igreja': presentes_hoje,
         'taxa_presenca': round(checkins_hoje / total_criancas * 100) if total_criancas else 0,
         'criancas_com_alergia': Crianca.objects.filter(ativa=True, alergias__gt='').count(),
+        'sem_autorizacao_imagem': Crianca.objects.filter(ativa=True, autorizacao_imagem=False).count(),
         'presentes_com_alergia': PresencaDiaria.objects.filter(
             data=hoje,
             status='PRESENTE',
@@ -157,6 +158,7 @@ def criancas_ativas(request):
     e por turma, com paginação."""
     termo = request.GET.get('q', '').strip()
     turma_id = request.GET.get('turma', '').strip()
+    sem_imagem = request.GET.get('sem_imagem') == '1'
 
     criancas = (
         Crianca.objects.filter(ativa=True)
@@ -176,6 +178,9 @@ def criancas_ativas(request):
         except (ValueError, TypeError):
             turma_id = ''
 
+    if sem_imagem:
+        criancas = criancas.filter(autorizacao_imagem=False)
+
     paginator = Paginator(criancas, 24)
     page_obj = paginator.get_page(request.GET.get('page'))
 
@@ -186,6 +191,7 @@ def criancas_ativas(request):
         'turmas': Turma.objects.filter(ativa=True).order_by('nome'),
         'termo': termo,
         'turma_id': turma_id,
+        'sem_imagem': sem_imagem,
         'total': paginator.count,
     })
 

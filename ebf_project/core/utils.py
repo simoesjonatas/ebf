@@ -1,7 +1,24 @@
+import re
 import qrcode
 from io import BytesIO
 import base64
 from django.conf import settings
+from django.core.exceptions import ValidationError
+
+
+def validar_telefone(telefone):
+    """Valida um telefone brasileiro. Aceita vazio (campo opcional). Quando
+    preenchido, exige DDD + número: 10 dígitos (fixo) ou 11 (celular).
+    Retorna o valor original (mantém a formatação digitada)."""
+    telefone = (telefone or '').strip()
+    if not telefone:
+        return telefone
+    digitos = re.sub(r'\D', '', telefone)
+    if len(digitos) < 10 or len(digitos) > 11:
+        raise ValidationError(
+            'Telefone inválido. Informe DDD + número (10 ou 11 dígitos). Ex.: (11) 99999-9999.'
+        )
+    return telefone
 
 
 def generate_qr_code(data, format='PNG'):

@@ -120,20 +120,33 @@ def checkin_crianca(request, crianca_id):
 def checkin_responsavel(request, responsavel_id):
     """Check-in em lote pelo responsável"""
     responsavel = get_object_or_404(Responsavel, id=responsavel_id)
-    
+    hoje = date.today()
+
     # Listar crianças que podem fazer check-in
     criancas = Crianca.objects.filter(
         crianca_responsavel__responsavel=responsavel,
         crianca_responsavel__pode_fazer_checkin=True,
         crianca_responsavel__ativo=True
     ).distinct()
-    
+
+    # Crianças que já fizeram check-in hoje (presentes ou já retiradas):
+    # não devem aparecer para novo check-in.
+    status_map = dict(
+        PresencaDiaria.objects
+        .filter(crianca__in=criancas, data=hoje, status__in=['PRESENTE', 'RETIRADA'])
+        .values_list('crianca_id', 'status')
+    )
+    criancas_disponiveis = criancas.exclude(id__in=status_map.keys())
+    criancas_presentes = [
+        {'crianca': c, 'status': status_map.get(c.id)}
+        for c in criancas if c.id in status_map
+    ]
+
     if request.method == 'POST':
-        form = CheckinForm(criancas_queryset=criancas, data=request.POST)
+        form = CheckinForm(criancas_queryset=criancas_disponiveis, data=request.POST)
         if form.is_valid():
             criancas_selecionadas = form.cleaned_data['criancas']
-            hoje = date.today()
-            
+
             for crianca in criancas_selecionadas:
                 presenca, criado = PresencaDiaria.objects.get_or_create(crianca=crianca, data=hoje)
                 
@@ -158,11 +171,12 @@ def checkin_responsavel(request, responsavel_id):
             messages.success(request, f'{len(criancas_selecionadas)} criança(s) registrada(s)!')
             return redirect('etiquetas:listar_etiquetas_dia')
     else:
-        form = CheckinForm(criancas_queryset=criancas)
-    
+        form = CheckinForm(criancas_queryset=criancas_disponiveis)
+
     context = {
         'form': form,
         'responsavel': responsavel,
+        'criancas_presentes': criancas_presentes,
     }
     return render(request, 'presencas/checkin_responsavel.html', context)
 
@@ -187,10 +201,22 @@ def checkin_lote(request, lote_id):
         ativa=True
     ).distinct()
 
+    hoje = date.today()
+    # Crianças do lote que já fizeram check-in hoje (não entram de novo)
+    status_map = dict(
+        PresencaDiaria.objects
+        .filter(crianca__in=criancas, data=hoje, status__in=['PRESENTE', 'RETIRADA'])
+        .values_list('crianca_id', 'status')
+    )
+    criancas_disponiveis = [c for c in criancas if c.id not in status_map]
+    criancas_presentes = [
+        {'crianca': c, 'status': status_map.get(c.id)}
+        for c in criancas if c.id in status_map
+    ]
+
     if request.method == 'POST':
-        hoje = date.today()
         total = 0
-        for crianca in criancas:
+        for crianca in criancas_disponiveis:
             presenca, criado = PresencaDiaria.objects.get_or_create(crianca=crianca, data=hoje)
             if criado or not presenca.ja_fez_checkin():
                 presenca.fazer_checkin(request.user, responsavel=lote.responsavel)
@@ -215,7 +241,8 @@ def checkin_lote(request, lote_id):
     return render(request, 'presencas/checkin_lote.html', {
         'lote': lote,
         'responsavel': lote.responsavel,
-        'criancas': criancas,
+        'criancas': criancas_disponiveis,
+        'criancas_presentes': criancas_presentes,
     })
 
 

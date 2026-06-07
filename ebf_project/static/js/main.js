@@ -36,6 +36,23 @@
         });
     });
 
+    /* ---- Máscara de telefone: (11) 99999-9999 -------------------------- */
+    function formatarTelefone(valor) {
+        var d = (valor || "").replace(/\D/g, "").slice(0, 11);   // só dígitos, máx 11
+        if (!d) return "";
+        if (d.length <= 2) return "(" + d;
+        var ddd = "(" + d.slice(0, 2) + ") ";
+        var resto = d.slice(2);
+        if (resto.length <= 4) return ddd + resto;
+        if (resto.length <= 8) return ddd + resto.slice(0, resto.length - 4) + "-" + resto.slice(resto.length - 4);
+        return ddd + resto.slice(0, 5) + "-" + resto.slice(5);     // celular (11 dígitos)
+    }
+    document.querySelectorAll(".js-telefone").forEach(function (input) {
+        var aplicar = function () { input.value = formatarTelefone(input.value); };
+        input.addEventListener("input", aplicar);
+        aplicar();   // formata o valor inicial (ex.: vindo do banco)
+    });
+
     /* ---- Mostrar / ocultar senha --------------------------------------- */
     document.querySelectorAll(".js-toggle-password").forEach(function (button) {
         button.addEventListener("click", function () {

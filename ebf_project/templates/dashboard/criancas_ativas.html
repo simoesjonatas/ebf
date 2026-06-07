@@ -34,9 +34,17 @@
         </div>
         <div class="col-12 col-md-3 d-flex gap-2">
             <button class="btn btn-primary flex-grow-1" type="submit"><i class="bi bi-funnel"></i> Filtrar</button>
-            {% if termo or turma_id %}
+            {% if termo or turma_id or sem_imagem %}
                 <a class="btn btn-outline-secondary" href="{% url 'dashboard:criancas_ativas' %}" title="Limpar filtros"><i class="bi bi-x-lg"></i></a>
             {% endif %}
+        </div>
+        <div class="col-12">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sem_imagem" name="sem_imagem" value="1" {% if sem_imagem %}checked{% endif %}>
+                <label class="form-check-label" for="sem_imagem">
+                    <i class="bi bi-camera-video-off text-danger"></i> Somente crianças <strong>sem autorização de imagem</strong>
+                </label>
+            </div>
         </div>
     </div>
 </form>
@@ -60,6 +68,9 @@
                     <h2 class="h6 mb-1 text-truncate">{{ crianca.nome_completo }}</h2>
                     <div class="small text-muted mb-1">{{ crianca.codigo_interno }} · {{ crianca.get_idade }} anos</div>
                     <span class="badge bg-primary">{% if crianca.turma %}{{ crianca.turma.nome }}{% else %}Sem turma{% endif %}</span>
+                    {% if not crianca.autorizacao_imagem %}
+                        <span class="badge bg-danger"><i class="bi bi-camera-video-off"></i> Sem imagem</span>
+                    {% endif %}
                 </div>
             </div>
         </a>
@@ -68,7 +79,7 @@
     <div class="col-12">
         <div class="empty-state">
             <i class="bi bi-search d-block mb-2"></i>
-            {% if termo or turma_id %}
+            {% if termo or turma_id or sem_imagem %}
                 Nenhuma criança encontrada com esses filtros.
             {% else %}
                 Nenhuma criança cadastrada ainda.
@@ -83,17 +94,17 @@
 <nav aria-label="Paginação" class="mt-4">
     <ul class="pagination justify-content-center mb-0">
         <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
-            <a class="page-link" href="?q={{ termo|urlencode }}&turma={{ turma_id }}&page={{ page_obj.previous_page_number }}" aria-label="Página anterior"><i class="bi bi-chevron-left"></i></a>
+            <a class="page-link" href="?q={{ termo|urlencode }}&turma={{ turma_id }}&sem_imagem={% if sem_imagem %}1{% endif %}&page={{ page_obj.previous_page_number }}" aria-label="Página anterior"><i class="bi bi-chevron-left"></i></a>
         </li>
         {% for num in paginator.page_range %}
             {% if num == page_obj.number %}
                 <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
             {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
-                <li class="page-item"><a class="page-link" href="?q={{ termo|urlencode }}&turma={{ turma_id }}&page={{ num }}">{{ num }}</a></li>
+                <li class="page-item"><a class="page-link" href="?q={{ termo|urlencode }}&turma={{ turma_id }}&sem_imagem={% if sem_imagem %}1{% endif %}&page={{ num }}">{{ num }}</a></li>
             {% endif %}
         {% endfor %}
         <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
-            <a class="page-link" href="?q={{ termo|urlencode }}&turma={{ turma_id }}&page={{ page_obj.next_page_number }}" aria-label="Próxima página"><i class="bi bi-chevron-right"></i></a>
+            <a class="page-link" href="?q={{ termo|urlencode }}&turma={{ turma_id }}&sem_imagem={% if sem_imagem %}1{% endif %}&page={{ page_obj.next_page_number }}" aria-label="Próxima página"><i class="bi bi-chevron-right"></i></a>
         </li>
     </ul>
 </nav>

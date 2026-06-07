@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, UserCreationForm
+from core.utils import validar_telefone
 from .models import Perfil
 
 STAFF_PROFILE_CHOICES = [
@@ -134,7 +135,7 @@ class StaffRegisterForm(UserCreationForm):
     telefone = forms.CharField(
         required=False,
         max_length=20,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(11) 99999-9999'})
+        widget=forms.TextInput(attrs={'class': 'form-control js-telefone', 'placeholder': '(11) 99999-9999', 'maxlength': '15', 'inputmode': 'tel'})
     )
     documento = forms.CharField(
         required=False,
@@ -164,6 +165,9 @@ class StaffRegisterForm(UserCreationForm):
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("Este e-mail já está cadastrado.")
         return email
+
+    def clean_telefone(self):
+        return validar_telefone(self.cleaned_data.get('telefone'))
 
     def save(self, commit=True):
         user = super().save(commit=False)

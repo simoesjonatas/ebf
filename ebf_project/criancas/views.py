@@ -145,7 +145,7 @@ def criar_crianca(request):
             CriancaResponsavel.objects.create(
                 crianca=crianca,
                 responsavel=responsavel,
-                parentesco='Responsável',
+                parentesco=form.cleaned_data.get('parentesco') or 'Responsável',
                 pode_fazer_checkin=True,
                 pode_fazer_checkout=True,
                 pode_editar_dados=True,

@@ -8,23 +8,68 @@
         <div class="card">
             <div class="card-header bg-primary text-white"><i class="bi bi-qr-code-scan"></i> Check-in de {{ responsavel.nome_completo }}</div>
             <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    <p class="text-muted">Selecione as crianças que chegaram com este responsável.</p>
-                    <div class="list-group mb-4">
-                        {% for choice in form.criancas %}
-                            <label class="list-group-item">{{ choice.tag }} {{ choice.choice_label }}</label>
-                        {% empty %}
-                            <div class="empty-state">Nenhuma criança disponível para check-in.</div>
+
+                {% if criancas_presentes %}
+                <div class="alert alert-success">
+                    <strong><i class="bi bi-check2-circle"></i> Já na igreja hoje:</strong>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        {% for item in criancas_presentes %}
+                            <span class="badge {% if item.status == 'RETIRADA' %}bg-warning{% else %}bg-success{% endif %}">
+                                {{ item.crianca.nome_completo }} · {% if item.status == 'RETIRADA' %}já retirada{% else %}presente{% endif %}
+                            </span>
                         {% endfor %}
                     </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-success" type="submit"><i class="bi bi-check-circle"></i> Registrar check-in</button>
-                        <a class="btn btn-outline-secondary" href="{% url 'presencas:leitura_qr_checkin' %}">Cancelar</a>
-                    </div>
+                </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    {% if form.criancas.field.queryset %}
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                            <p class="text-muted mb-0">Selecione as crianças que chegaram com este responsável.</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selTodasCheckin">
+                                <label class="form-check-label fw-semibold" for="selTodasCheckin">Selecionar todas</label>
+                            </div>
+                        </div>
+                        <div class="list-group mb-4">
+                            {% for choice in form.criancas %}
+                                <label class="list-group-item d-flex align-items-center gap-2">{{ choice.tag }} {{ choice.choice_label }}</label>
+                            {% endfor %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success" type="submit"><i class="bi bi-check-circle"></i> Registrar check-in</button>
+                            <a class="btn btn-outline-secondary" href="{% url 'presencas:leitura_qr_checkin' %}">Cancelar</a>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-emoji-smile d-block mb-2"></i>
+                            {% if criancas_presentes %}
+                                Todas as crianças deste responsável já fizeram check-in hoje.
+                            {% else %}
+                                Nenhuma criança disponível para check-in.
+                            {% endif %}
+                        </div>
+                        <div class="mt-3">
+                            <a class="btn btn-outline-secondary" href="{% url 'presencas:leitura_qr_checkin' %}"><i class="bi bi-arrow-left"></i> Voltar</a>
+                        </div>
+                    {% endif %}
                 </form>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function () {
+        var sel = document.getElementById("selTodasCheckin");
+        if (!sel) return;
+        var itens = document.querySelectorAll('input[name="criancas"]');
+        sel.addEventListener("change", function () {
+            itens.forEach(function (chk) { chk.checked = sel.checked; });
+        });
+    })();
+</script>
 {% endblock %}
