@@ -409,6 +409,13 @@ def checkout_lote(request, lote_id):
         presencas__status='PRESENTE'
     ).distinct()
 
+    # Crianças do lote que já saíram hoje (informativo)
+    criancas_retiradas = lote.criancas.filter(
+        ativa=True,
+        presencas__data=hoje,
+        presencas__status='RETIRADA'
+    ).distinct()
+
     if request.method == 'POST':
         total = 0
         for crianca in criancas:
@@ -434,6 +441,7 @@ def checkout_lote(request, lote_id):
         'lote': lote,
         'responsavel': lote.responsavel,
         'criancas': criancas,
+        'criancas_retiradas': criancas_retiradas,
     })
 
 
@@ -443,7 +451,7 @@ def checkout_responsavel(request, responsavel_id):
     responsavel = get_object_or_404(Responsavel, id=responsavel_id)
     hoje = date.today()
     
-    # Listar crianças aptas para checkout
+    # Listar crianças aptas para checkout (presentes)
     criancas = Crianca.objects.filter(
         crianca_responsavel__responsavel=responsavel,
         crianca_responsavel__pode_fazer_checkout=True,
@@ -451,7 +459,15 @@ def checkout_responsavel(request, responsavel_id):
         presencas__data=hoje,
         presencas__status='PRESENTE'
     ).distinct()
-    
+
+    # Crianças deste responsável que JÁ saíram hoje (apenas informativo)
+    criancas_retiradas = Crianca.objects.filter(
+        crianca_responsavel__responsavel=responsavel,
+        crianca_responsavel__ativo=True,
+        presencas__data=hoje,
+        presencas__status='RETIRADA'
+    ).distinct()
+
     if request.method == 'POST':
         form = CheckoutForm(criancas_queryset=criancas, data=request.POST)
         if form.is_valid():
@@ -480,9 +496,10 @@ def checkout_responsavel(request, responsavel_id):
             return redirect('presencas:leitura_qr_checkout')
     else:
         form = CheckoutForm(criancas_queryset=criancas)
-    
+
     context = {
         'form': form,
         'responsavel': responsavel,
+        'criancas_retiradas': criancas_retiradas,
     }
     return render(request, 'presencas/checkout_responsavel.html', context)

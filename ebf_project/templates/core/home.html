@@ -9,6 +9,11 @@
         <div class="eyebrow">EBF PIBVP</div>
         <h1 class="h2 mb-2">Controle de crianças, presença e retirada</h1>
         <p class="mb-0">Acesse rapidamente a área de família ou as ferramentas operacionais do seu perfil.</p>
+        {% if is_responsavel_user %}
+        <button type="button" class="btn btn-light btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#qrResponsavelModal">
+            <i class="bi bi-qr-code"></i> Meu QR Code
+        </button>
+        {% endif %}
     </div>
     <img src="{% static 'img/theozinho2.png' %}" alt="" class="hero-mascote" onerror="this.style.display='none'">
 </div>

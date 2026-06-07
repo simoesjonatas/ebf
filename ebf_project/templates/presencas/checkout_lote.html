@@ -11,9 +11,20 @@
             <p class="text-muted mb-0">QR temporário gerado por {{ responsavel.nome_completo }}. Válido até {{ lote.expira_em|date:"d/m/Y H:i" }}.</p>
         </div>
 
+        {% if criancas_retiradas %}
+        <div class="alert alert-warning">
+            <strong><i class="bi bi-box-arrow-right"></i> Já retiradas hoje:</strong>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+                {% for crianca in criancas_retiradas %}
+                    <span class="badge bg-warning">{{ crianca.nome_completo }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <form method="post" class="card">
             {% csrf_token %}
-            <div class="card-header">Crianças do lote</div>
+            <div class="card-header">Crianças para retirada</div>
             <div class="card-body">
                 <div class="list-group">
                     {% for crianca in criancas %}
@@ -22,11 +33,17 @@
                             <span class="text-muted d-block small">{{ crianca.codigo_interno }} · {% if crianca.turma %}{{ crianca.turma.nome }}{% else %}Sem turma{% endif %}</span>
                         </div>
                     {% empty %}
-                        <div class="empty-state">Nenhuma criança presente disponível para check-out neste QR.</div>
+                        <div class="empty-state">
+                            {% if criancas_retiradas %}
+                                Todas as crianças deste QR já foram retiradas hoje.
+                            {% else %}
+                                Nenhuma criança presente disponível para check-out neste QR.
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
             </div>
-            <div class="card-footer bg-white d-flex gap-2">
+            <div class="card-footer d-flex gap-2">
                 <button class="btn btn-accent" type="submit" {% if not criancas %}disabled{% endif %}>
                     <i class="bi bi-check-circle"></i> Confirmar retirada
                 </button>

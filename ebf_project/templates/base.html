@@ -116,6 +116,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuUsuario">
                                 {% if is_responsavel_user %}
+                                <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#qrResponsavelModal"><i class="bi bi-qr-code"></i> Meu QR Code</button></li>
                                 <li><a class="dropdown-item" href="{% url 'responsaveis:minhas_criancas' %}"><i class="bi bi-emoji-smile"></i> Minhas crianças</a></li>
                                 {% endif %}
                                 <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person-circle"></i> Meu perfil</a></li>
@@ -167,6 +168,25 @@
             <a class="small" href="{% url 'core:termos_uso' %}">Termos de Uso e Privacidade/LGPD</a>
         </div>
     </footer>
+
+    {% if is_responsavel_user and qr_code_responsavel %}
+    <!-- Modal: QR Code do responsável (acessível de qualquer página) -->
+    <div class="modal fade" id="qrResponsavelModal" tabindex="-1" aria-labelledby="qrResponsavelLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="qrResponsavelLabel"><i class="bi bi-qr-code"></i> Meu QR Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="text-muted">Apresente este QR na recepção para o check-in e check-out das suas crianças.</p>
+                    <img src="{{ qr_code_responsavel }}" alt="Meu QR Code" class="qr-image">
+                    {% if responsavel_nome %}<p class="small fw-semibold mt-3 mb-0">{{ responsavel_nome }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="{% static 'js/main.js' %}" defer></script>
