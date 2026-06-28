@@ -2,8 +2,53 @@ import re
 import qrcode
 from io import BytesIO
 import base64
+from pathlib import Path
+from PIL import Image, ImageOps
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+
+def comprimir_imagem(arquivo, lado_maximo=1000, qualidade=85):
+    """Redimensiona e recomprime uma imagem enviada, devolvendo um arquivo
+    pronto para salvar. Mantém a proporção (lado maior limitado a
+    ``lado_maximo`` px), reencoda como JPEG com a ``qualidade`` informada e
+    aplica a orientação do EXIF (corrige fotos "deitadas" tiradas no celular).
+
+    Como a foto 3x4 é exibida pequena, isso derruba uma imagem de 6-8 MB para
+    ~100-150 KB sem perda visível, economizando disco e banda. Se o arquivo
+    não for uma imagem válida, devolve o original sem alterar."""
+    try:
+        imagem = Image.open(arquivo)
+        # Aplica a rotação registrada no EXIF e descarta os metadados.
+        imagem = ImageOps.exif_transpose(imagem)
+    except Exception:
+        # Não é uma imagem que o Pillow consiga abrir — deixa a validação de
+        # content_type cuidar do erro; aqui só não processamos.
+        arquivo.seek(0)
+        return arquivo
+
+    # JPEG não tem canal alfa: converte transparência/paleta para RGB.
+    if imagem.mode in ('RGBA', 'P', 'LA'):
+        fundo = Image.new('RGB', imagem.size, (255, 255, 255))
+        imagem = imagem.convert('RGBA')
+        fundo.paste(imagem, mask=imagem.split()[-1])
+        imagem = fundo
+    elif imagem.mode != 'RGB':
+        imagem = imagem.convert('RGB')
+
+    # Reduz mantendo a proporção (não amplia imagens menores).
+    imagem.thumbnail((lado_maximo, lado_maximo), Image.LANCZOS)
+
+    buffer = BytesIO()
+    imagem.save(buffer, format='JPEG', quality=qualidade, optimize=True)
+    buffer.seek(0)
+
+    nome_base = Path(getattr(arquivo, 'name', 'foto')).stem or 'foto'
+    nome = f'{nome_base}.jpg'
+    return InMemoryUploadedFile(
+        buffer, 'ImageField', nome, 'image/jpeg', buffer.getbuffer().nbytes, None
+    )
 
 
 def validar_telefone(telefone):

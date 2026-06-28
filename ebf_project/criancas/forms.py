@@ -1,5 +1,6 @@
 from django import forms
 import re
+from core.utils import comprimir_imagem
 from .models import Crianca, CriancaResponsavel
 from responsaveis.models import Responsavel
 from turmas.models import Turma
@@ -81,10 +82,18 @@ class CriancaForm(forms.ModelForm):
         if content_type and not content_type.startswith('image/'):
             raise forms.ValidationError('Envie um arquivo de imagem válido.')
 
-        if foto.size > 5 * 1024 * 1024:
-            raise forms.ValidationError('A foto deve ter no máximo 5 MB.')
+        # Limite de entrada generoso: aceita fotos de celular sem atrito. O
+        # arquivo é comprimido logo abaixo, então o que será salvo em disco
+        # fica em torno de ~100-150 KB independentemente do tamanho enviado.
+        if foto.size > 8 * 1024 * 1024:
+            raise forms.ValidationError('A foto deve ter no máximo 8 MB.')
 
-        return foto
+        # Se nenhuma imagem nova foi enviada (edição mantendo a atual), não há
+        # o que comprimir.
+        if not hasattr(foto, 'read'):
+            return foto
+
+        return comprimir_imagem(foto)
 
     def _turma_por_idade(self, idade):
         turmas = Turma.objects.filter(ativa=True)
