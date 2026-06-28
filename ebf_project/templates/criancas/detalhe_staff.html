@@ -54,7 +54,14 @@
 
     <div class="col-lg-8">
         <div class="card mb-4">
-            <div class="card-header">Status de hoje</div>
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span>Status de hoje</span>
+                {% if presenca_hoje %}
+                <a href="{% url 'etiquetas:gerar_etiqueta' presenca_hoje.id %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-printer"></i> Reimprimir etiqueta
+                </a>
+                {% endif %}
+            </div>
             <div class="card-body">
                 {% if presenca_hoje %}
                     <p class="mb-1"><strong>Status:</strong> {{ presenca_hoje.get_status_display }}</p>

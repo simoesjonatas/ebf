@@ -51,4 +51,5 @@ urlpatterns = [
     ),
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit/', views.perfil_edit_view, name='perfil_edit'),
+    path('profile/senha/', views.alterar_senha_view, name='alterar_senha'),
 ]

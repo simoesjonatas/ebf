@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
@@ -10,7 +10,10 @@ from django.urls import reverse
 from datetime import date
 from core.decorators import coordenacao_requerida
 from core.utils import generate_qr_code, get_qr_payload
-from .forms import ResponsavelRegisterForm, StaffRegisterForm, StaffRoleForm, UserLoginForm, PerfilForm, STAFF_PROFILE_CHOICES
+from .forms import (
+    ResponsavelRegisterForm, StaffRegisterForm, StaffRoleForm, StyledPasswordChangeForm,
+    UserLoginForm, PerfilForm, STAFF_PROFILE_CHOICES,
+)
 from .models import Perfil
 from responsaveis.models import Responsavel
 from criancas.models import Crianca
@@ -312,3 +315,20 @@ def perfil_edit_view(request):
         form = PerfilForm(instance=perfil)
     
     return render(request, 'accounts/perfil_form.html', {'form': form})
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def alterar_senha_view(request):
+    """Permite que o próprio usuário troque sua senha a partir do perfil."""
+    if request.method == 'POST':
+        form = StyledPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # evita deslogar o usuário
+            messages.success(request, 'Senha alterada com sucesso!')
+            return redirect('accounts:profile')
+    else:
+        form = StyledPasswordChangeForm(user=request.user)
+
+    return render(request, 'accounts/alterar_senha.html', {'form': form})

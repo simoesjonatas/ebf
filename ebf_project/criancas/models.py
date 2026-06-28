@@ -88,6 +88,11 @@ class Crianca(BaseModel):
     def tem_observacoes_importantes(self):
         return bool(self.alergias or self.cuidados_especiais)
 
+    def get_responsavel_principal(self):
+        vinculo = self.crianca_responsavel.filter(ativo=True, responsavel_principal=True).first() \
+            or self.crianca_responsavel.filter(ativo=True).first()
+        return vinculo.responsavel if vinculo else None
+
 
 class CriancaResponsavel(BaseModel):
     crianca = models.ForeignKey(Crianca, on_delete=models.CASCADE, related_name='crianca_responsavel')

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm, UserCreationForm
 from core.utils import validar_telefone
 from .models import Perfil
 
@@ -92,6 +92,37 @@ class StyledPasswordResetForm(PasswordResetForm):
 
 
 class StyledSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label='Nova senha',
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nova senha',
+            'autocomplete': 'new-password',
+        }),
+    )
+    new_password2 = forms.CharField(
+        label='Confirmar nova senha',
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirme a nova senha',
+            'autocomplete': 'new-password',
+        }),
+    )
+
+
+class StyledPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label='Senha atual',
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Senha atual',
+            'autocomplete': 'current-password',
+            'autofocus': True,
+        }),
+    )
     new_password1 = forms.CharField(
         label='Nova senha',
         strip=False,

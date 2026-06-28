@@ -8,7 +8,34 @@
         <div class="eyebrow">Coordenação</div>
         <h1 class="h3 mb-0">Turmas</h1>
     </div>
-    <a href="{% url 'turmas:criar' %}" class="btn btn-accent"><i class="bi bi-plus-circle"></i> Cadastrar turma</a>
+    <div>
+        <a href="{% url 'turmas:sem_turma' %}" class="btn btn-outline-primary"><i class="bi bi-person-exclamation"></i> Crianças sem turma</a>
+        <a href="{% url 'turmas:criar' %}" class="btn btn-accent"><i class="bi bi-plus-circle"></i> Cadastrar turma</a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+            <div class="btn-group flex-wrap" role="group" aria-label="Filtro de status">
+                <a class="btn btn-sm {% if status == 'todas' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?status=todas{% if busca %}&q={{ busca }}{% endif %}">
+                    Todas <span class="badge {% if status == 'todas' %}text-bg-light{% else %}text-bg-primary{% endif %}">{{ total_todas }}</span>
+                </a>
+                <a class="btn btn-sm {% if status == 'ativas' %}btn-success{% else %}btn-outline-success{% endif %}" href="?status=ativas{% if busca %}&q={{ busca }}{% endif %}">
+                    Ativas <span class="badge {% if status == 'ativas' %}text-bg-light{% else %}text-bg-success{% endif %}">{{ total_ativas }}</span>
+                </a>
+                <a class="btn btn-sm {% if status == 'inativas' %}btn-secondary{% else %}btn-outline-secondary{% endif %}" href="?status=inativas{% if busca %}&q={{ busca }}{% endif %}">
+                    Inativas <span class="badge {% if status == 'inativas' %}text-bg-light{% else %}text-bg-secondary{% endif %}">{{ total_inativas }}</span>
+                </a>
+            </div>
+            <div class="input-group" style="max-width: 320px;">
+                <input type="hidden" name="status" value="{{ status }}">
+                <input type="search" name="q" class="form-control" placeholder="Buscar por nome, faixa etária ou sala..." value="{{ busca }}">
+                <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+                {% if busca %}<a href="?status={{ status }}" class="btn btn-outline-secondary" title="Limpar busca"><i class="bi bi-x-lg"></i></a>{% endif %}
+            </div>
+        </form>
+    </div>
 </div>
 
 <div class="card">
@@ -48,7 +75,9 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center text-muted py-4">Nenhuma turma cadastrada.</td>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        {% if busca or status != 'todas' %}Nenhuma turma encontrada com esse filtro.{% else %}Nenhuma turma cadastrada.{% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

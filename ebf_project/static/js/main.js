@@ -67,6 +67,121 @@
         });
     });
 
+    /* ---- Checklist de requisitos de senha (cadastro e troca de senha) --- */
+    function initPasswordChecklist(opts) {
+        var senhaInput = document.getElementById(opts.senha1);
+        var reqTamanho = document.getElementById(opts.reqTamanho);
+        if (!senhaInput || !reqTamanho) return;
+
+        var reqSimilar = document.getElementById(opts.reqSimilar);
+        var reqNumerico = document.getElementById(opts.reqNumerico);
+        var reqIguais = document.getElementById(opts.reqIguais);
+        var reqComum = document.getElementById(opts.reqComum);
+        var nomeInput = document.getElementById(opts.nome);
+        var emailInput = document.getElementById(opts.email);
+        var senha2Input = document.getElementById(opts.senha2);
+
+        var marcar = function (li, ok) {
+            var icon = li.querySelector("i");
+            li.classList.toggle("ok", ok);
+            if (icon) icon.className = ok ? "bi bi-check-circle-fill" : "bi bi-circle";
+        };
+
+        // Reproduz o cálculo do UserAttributeSimilarityValidator do Django:
+        // SequenceMatcher(a, b).quick_ratio() >= 0.7 é considerado "parecido".
+        // quick_ratio = 2 * (soma das contagens mínimas de cada caractere
+        // em comum) / (tamanho de a + tamanho de b).
+        var quickRatio = function (a, b) {
+            if (!a.length || !b.length) return 0;
+            var contagemA = {};
+            for (var i = 0; i < a.length; i++) contagemA[a[i]] = (contagemA[a[i]] || 0) + 1;
+            var contagemB = {};
+            for (var j = 0; j < b.length; j++) contagemB[b[j]] = (contagemB[b[j]] || 0) + 1;
+            var matches = 0;
+            for (var c in contagemA) {
+                if (contagemB[c]) matches += Math.min(contagemA[c], contagemB[c]);
+            }
+            return (2 * matches) / (a.length + b.length);
+        };
+
+        // Django também testa cada "pedaço" do valor (split por re.split(r'\W+', ...)),
+        // além do valor inteiro — ex.: e-mail "ana@gmail.com" gera "ana", "gmail", "com".
+        // \W no Python (Unicode) trata letras acentuadas como parte da palavra,
+        // então usamos \p{L}\p{N}_ aqui para não fragmentar nomes como "João".
+        var partesDe = function (valor) {
+            if (!valor) return [];
+            var partes = valor.split(/[^\p{L}\p{N}_]+/u).filter(Boolean);
+            partes.push(valor);
+            return partes;
+        };
+
+        // Mesma otimização do Django: ignora pedaços muito menores que a senha,
+        // pois matematicamente nunca atingiriam o limiar de similaridade.
+        var excedeRazaoDeTamanho = function (senha, valuePart) {
+            var pwdLen = senha.length;
+            var limiteSimilaridade = (0.7 / 2) * pwdLen;
+            var valueLen = valuePart.length;
+            return pwdLen >= 10 * valueLen && valueLen < limiteSimilaridade;
+        };
+
+        var pareceComDado = function (senha, dado) {
+            senha = senha.toLowerCase();
+            var partes = partesDe(dado);
+            for (var i = 0; i < partes.length; i++) {
+                var parte = partes[i].toLowerCase();
+                if (excedeRazaoDeTamanho(senha, parte)) continue;
+                if (quickRatio(senha, parte) >= 0.7) return true;
+            }
+            return false;
+        };
+
+        var validar = function () {
+            var senha = senhaInput.value;
+            marcar(reqTamanho, senha.length >= 8);
+            marcar(reqNumerico, senha.length > 0 && !/^\d+$/.test(senha));
+
+            // Mesma lista usada pelo Django (CommonPasswordValidator), carregada
+            // via static/js/common-passwords.js.
+            if (reqComum) {
+                var lista = window.EBF_COMMON_PASSWORDS;
+                var comum = !!lista && lista.has(senha.toLowerCase());
+                marcar(reqComum, senha.length > 0 && !comum);
+            }
+
+            var nome = nomeInput ? nomeInput.value : "";
+            var nomeParts = nome.trim().split(/\s+/);
+            var email = emailInput ? emailInput.value : "";
+
+            var similar = senha.length === 0 ||
+                pareceComDado(senha, email) ||
+                nomeParts.some(function (parte) { return pareceComDado(senha, parte); });
+            marcar(reqSimilar, senha.length > 0 && !similar);
+
+            if (reqIguais) marcar(reqIguais, senha2Input.value.length > 0 && senha === senha2Input.value);
+        };
+
+        senhaInput.addEventListener("input", validar);
+        if (nomeInput) nomeInput.addEventListener("input", validar);
+        if (emailInput) emailInput.addEventListener("input", validar);
+        if (senha2Input) senha2Input.addEventListener("input", validar);
+    }
+
+    var checklistIds = {
+        reqTamanho: "req-tamanho",
+        reqSimilar: "req-similar",
+        reqNumerico: "req-numerico",
+        reqIguais: "req-iguais",
+        reqComum: "req-comum",
+    };
+    // Cadastro de responsável (página de registro)
+    initPasswordChecklist(Object.assign({}, checklistIds, {
+        senha1: "id_password1", senha2: "id_password2", nome: "id_nome_completo", email: "id_email",
+    }));
+    // Troca de senha (perfil do usuário já autenticado)
+    initPasswordChecklist(Object.assign({}, checklistIds, {
+        senha1: "id_new_password1", senha2: "id_new_password2", nome: "id_nome_atual", email: "id_email_atual",
+    }));
+
     /* ---- Tema claro / escuro ------------------------------------------- */
     var STORAGE_KEY = "ebf-theme";
     var root = document.documentElement;

@@ -106,6 +106,25 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Cada arquivo estático recebe um hash do conteúdo no nome (ex.: main.a1b2c3.js)
+# gerado pelo collectstatic a cada deploy. Como o nome muda quando o conteúdo
+# muda, o navegador nunca usa um arquivo desatualizado em cache — não é mais
+# preciso pedir para o usuário dar F5 depois de uma atualização. As tags
+# {% static %} nos templates já resolvem para o nome com hash automaticamente.
+# Só vale em produção (DEBUG=False): o runserver local não usa STATIC_ROOT,
+# então o hash do manifest ficaria desatualizado durante o desenvolvimento.
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': (
+            'django.contrib.staticfiles.storage.StaticFilesStorage' if DEBUG
+            else 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+        ),
+    },
+}
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth

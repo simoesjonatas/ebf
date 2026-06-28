@@ -92,6 +92,18 @@
                         </li>
                         {% endif %}
 
+                        {# Responsável puro (sem nenhum perfil de equipe): atalhos diretos, sem precisar abrir o menu #}
+                        {% if is_responsavel_user and not is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'responsaveis:minhas_criancas' %}"><i class="bi bi-emoji-smile"></i> Minhas crianças</a>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link btn-link-nav" data-bs-toggle="modal" data-bs-target="#qrResponsavelModal">
+                                <i class="bi bi-qr-code"></i> Meu QR Code
+                            </button>
+                        </li>
+                        {% endif %}
+
                         {# Gestão: dashboard, turmas, staff e responsáveis #}
                         {% if user_profile.is_coordenacao or user_profile.is_admin %}
                         <li class="nav-item dropdown">
@@ -115,7 +127,7 @@
                                 {% if user_profile %}<span class="badge-role">{{ user_profile.get_tipo_perfil_display }}</span>{% endif %}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuUsuario">
-                                {% if is_responsavel_user %}
+                                {% if is_responsavel_user and is_staff %}
                                 <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#qrResponsavelModal"><i class="bi bi-qr-code"></i> Meu QR Code</button></li>
                                 <li><a class="dropdown-item" href="{% url 'responsaveis:minhas_criancas' %}"><i class="bi bi-emoji-smile"></i> Minhas crianças</a></li>
                                 {% endif %}

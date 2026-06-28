@@ -45,7 +45,7 @@
 
                     <div class="row align-items-center mb-4">
                         <div class="col-md-4 mb-3 mb-md-0">
-                            <div class="photo-3x4-preview">
+                            <div class="photo-3x4-preview" id="fotoPreviewWrap" role="button" tabindex="0" title="Clique para escolher a foto">
                                 <span id="fotoPlaceholder" {% if crianca.foto %}class="d-none"{% endif %}><i class="bi bi-person-bounding-box"></i><br>Foto 3x4</span>
                                 <img id="fotoPreview" alt="Prévia da foto da criança" {% if crianca.foto %}src="{{ crianca.foto.url }}"{% else %}class="d-none"{% endif %}>
                             </div>
@@ -134,6 +134,7 @@
         text-align: center;
         font-weight: 600;
         overflow: hidden;
+        cursor: pointer;
     }
     .photo-3x4-preview img {
         width: 100%;
@@ -148,6 +149,17 @@
     const fotoInput = document.querySelector('input[name="foto"]');
     const fotoPreview = document.getElementById('fotoPreview');
     const fotoPlaceholder = document.getElementById('fotoPlaceholder');
+    const fotoPreviewWrap = document.getElementById('fotoPreviewWrap');
+
+    if (fotoInput && fotoPreviewWrap) {
+        fotoPreviewWrap.addEventListener('click', () => fotoInput.click());
+        fotoPreviewWrap.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fotoInput.click();
+            }
+        });
+    }
 
     if (fotoInput) {
         fotoInput.addEventListener('change', () => {

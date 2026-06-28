@@ -70,6 +70,13 @@ main.app-main {
     color: #fff !important;
     background: rgba(255, 255, 255, .16);
 }
+/* Botão que precisa parecer um item de navegação (ex.: abrir modal do QR) */
+.app-navbar .btn-link-nav {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
 /* Identificação do usuário logado (não é um link clicável) */
 .app-navbar .navbar-user {
     color: rgba(255, 255, 255, .72) !important;
@@ -237,6 +244,17 @@ body.auth-page main.app-main {
     border: none;
 }
 .auth-card .card-body { padding: var(--ebf-space-6); }
+/* Checklist de requisitos de senha (cadastro): fica verde/checked conforme
+   o requisito é cumprido durante a digitação. */
+.password-requisitos li {
+    color: var(--ebf-text-muted, #6c757d);
+    transition: color var(--ebf-transition, .15s ease);
+}
+.password-requisitos li i { margin-right: .35rem; }
+.password-requisitos li.ok {
+    color: var(--ebf-success, #198754);
+    font-weight: 600;
+}
 /* Logo PIBVP Kids (wordmark) no topo do card de autenticação */
 .auth-logo {
     display: block;

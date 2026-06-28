@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Crianças sem turma - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <div class="eyebrow">Coordenação</div>
+        <h1 class="h3 mb-0">Crianças sem turma</h1>
+    </div>
+    <a href="{% url 'turmas:listar' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar às turmas</a>
+</div>
+
+{% if total_sem_turma %}
+<div class="alert alert-info d-flex flex-wrap align-items-center gap-2 mb-4">
+    <i class="bi bi-info-circle"></i>
+    <span class="flex-grow-1">
+        {{ itens|length }} criança{{ itens|pluralize }}{% if busca %} encontrada{{ itens|pluralize }} para "{{ busca }}"{% else %} sem turma{% endif %}.
+        {% if total_com_sugestao %}{{ total_com_sugestao }} pode{{ total_com_sugestao|pluralize:"m" }} ser alocada{{ total_com_sugestao|pluralize }} automaticamente pela faixa etária.{% else %}Nenhuma tem uma turma compatível única pela faixa etária — aloque manualmente abaixo.{% endif %}
+    </span>
+    {% if total_com_sugestao %}
+    <form method="post" action="{% url 'turmas:alocar_automatico' %}" class="d-inline">
+        {% csrf_token %}
+        {% if busca %}<input type="hidden" name="q" value="{{ busca }}">{% endif %}
+        <button class="btn btn-success" type="submit">
+            <i class="bi bi-magic"></i> Alocar automaticamente ({{ total_com_sugestao }})
+        </button>
+    </form>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="input-group" style="max-width: 320px;">
+            <input type="search" name="q" class="form-control" placeholder="Buscar por nome da criança..." value="{{ busca }}">
+            <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+            {% if busca %}<a href="{% url 'turmas:sem_turma' %}" class="btn btn-outline-secondary" title="Limpar busca"><i class="bi bi-x-lg"></i></a>{% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Criança</th>
+                    <th>Idade</th>
+                    <th>Sugestão automática</th>
+                    <th class="text-end">Alocar manualmente</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in itens %}
+                <tr>
+                    <td><strong>{{ item.crianca.nome_completo }}</strong><br><span class="text-muted small">{{ item.crianca.codigo_interno }}</span></td>
+                    <td>{{ item.crianca.get_idade }} anos</td>
+                    <td>
+                        {% if item.sugestao %}
+                            <span class="badge text-bg-success">{{ item.sugestao.nome }} ({{ item.sugestao.faixa_etaria }})</span>
+                        {% else %}
+                            <span class="text-muted">Sem sugestão — escolha ao lado</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <form method="post" action="{% url 'turmas:alocar_manual' %}" class="d-flex justify-content-end gap-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="crianca_id" value="{{ item.crianca.id }}">
+                            {% if busca %}<input type="hidden" name="q" value="{{ busca }}">{% endif %}
+                            <select name="turma_id" class="form-select form-select-sm" style="max-width: 220px;">
+                                <option value="">Selecione a turma...</option>
+                                {% for turma in turmas_ativas %}
+                                <option value="{{ turma.id }}" {% if item.sugestao and item.sugestao.id == turma.id %}selected{% endif %}>{{ turma.nome }} ({{ turma.faixa_etaria }})</option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-check-lg"></i> Alocar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        {% if busca %}Nenhuma criança sem turma encontrada para "{{ busca }}".{% else %}Todas as crianças ativas já têm turma. 🎉{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

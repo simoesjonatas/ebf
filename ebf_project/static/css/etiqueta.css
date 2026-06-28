@@ -72,6 +72,15 @@
     border-radius: 1mm;
     padding: .4mm 1.2mm;
 }
+.etiqueta-responsavel {
+    margin-top: auto;
+    font-size: 6.5pt;
+    font-weight: 600;
+    word-break: break-word;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
 /* Turma: coluna própria à direita, em caixa com borda (sem fundo preto,
    para imprimir bem no térmico) */
@@ -125,6 +134,12 @@
     .app-navbar, .app-footer, .app-messages,
     .skip-link, .no-print, .btn, .etiqueta-toolbar { display: none !important; }
     main.app-main, .page-shell { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+    /* A página de etiqueta única usa grid Bootstrap (row/col) em volta da
+       etiqueta; margens/paddings dessas colunas somam altura extra e fazem
+       sobrar uma página em branco após a etiqueta de 29mm. */
+    .row { margin: 0 !important; }
+    .row > [class*="col-"] { padding: 0 !important; }
+    .text-center.mb-4 { margin: 0 !important; }
 
     .etiqueta-wrap, .etiquetas-lote {
         padding: 0 !important;
