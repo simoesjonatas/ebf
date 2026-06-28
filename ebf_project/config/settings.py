@@ -37,6 +37,11 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Serve os arquivos estáticos (com hash + cache correto) direto pelo
+    # gunicorn, mesmo sem o nginx na frente. Precisa vir logo após o
+    # SecurityMiddleware. As imagens (/media/) continuam sendo servidas pelo
+    # nginx — o WhiteNoise cuida apenas de /static/.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -113,6 +118,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # {% static %} nos templates já resolvem para o nome com hash automaticamente.
 # Só vale em produção (DEBUG=False): o runserver local não usa STATIC_ROOT,
 # então o hash do manifest ficaria desatualizado durante o desenvolvimento.
+#
+# O backend do WhiteNoise (CompressedManifestStaticFilesStorage) faz o hash do
+# manifest + gera versões .gz/.br e serve com cabeçalhos de cache "immutable".
 STORAGES = {
     'default': {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
@@ -120,7 +128,7 @@ STORAGES = {
     'staticfiles': {
         'BACKEND': (
             'django.contrib.staticfiles.storage.StaticFilesStorage' if DEBUG
-            else 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+            else 'whitenoise.storage.CompressedManifestStaticFilesStorage'
         ),
     },
 }
