@@ -46,6 +46,7 @@
                     <th>Turma</th>
                     <th>Faixa etária</th>
                     <th>Sala/local</th>
+                    <th>Crianças</th>
                     <th>Status</th>
                     <th class="text-end">Ações</th>
                 </tr>
@@ -56,6 +57,7 @@
                     <td><strong>{{ turma.nome }}</strong></td>
                     <td>{{ turma.faixa_etaria }}</td>
                     <td>{{ turma.sala_local }}</td>
+                    <td><span class="badge text-bg-primary">{{ turma.total_criancas_ativas }}</span></td>
                     <td>
                         {% if turma.ativa %}
                             <span class="badge text-bg-success">Ativa</span>
@@ -64,18 +66,21 @@
                         {% endif %}
                     </td>
                     <td class="text-end">
-                        <a href="{% url 'turmas:editar' turma.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Editar</a>
-                        <form method="post" action="{% url 'turmas:alternar' turma.id %}" class="d-inline">
-                            {% csrf_token %}
-                            <button class="btn btn-sm btn-outline-secondary" type="submit">
-                                {% if turma.ativa %}Desativar{% else %}Ativar{% endif %}
-                            </button>
-                        </form>
+                        <div class="d-flex justify-content-end gap-2 flex-wrap">
+                            <a href="{% url 'turmas:criancas' turma.id %}" class="btn btn-sm btn-outline-success"><i class="bi bi-people"></i> Crianças</a>
+                            <a href="{% url 'turmas:editar' turma.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Editar</a>
+                            <form method="post" action="{% url 'turmas:alternar' turma.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-secondary" type="submit">
+                                    {% if turma.ativa %}Desativar{% else %}Ativar{% endif %}
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center text-muted py-4">
+                    <td colspan="6" class="text-center text-muted py-4">
                         {% if busca or status != 'todas' %}Nenhuma turma encontrada com esse filtro.{% else %}Nenhuma turma cadastrada.{% endif %}
                     </td>
                 </tr>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Crianças da turma {{ turma.nome }} - EBF PIBVP{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <div class="eyebrow">Coordenação</div>
+        <h1 class="h3 mb-1">Crianças da turma {{ turma.nome }}</h1>
+        <p class="text-muted mb-0">{{ turma.faixa_etaria }} · {{ turma.sala_local }}</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'turmas:listar' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Voltar às turmas</a>
+        <a href="{% url 'turmas:exportar_criancas_excel' turma.id %}" class="btn btn-success"><i class="bi bi-file-earmark-spreadsheet"></i> Baixar Excel</a>
+    </div>
+</div>
+
+<div class="alert alert-info d-flex align-items-center gap-2 mb-4">
+    <i class="bi bi-info-circle"></i>
+    <span>{{ total }} criança{{ total|pluralize }} ativa{{ total|pluralize }} nesta turma.</span>
+</div>
+
+<div class="card">
+    <div class="card-body table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Criança</th>
+                    <th>Idade</th>
+                    <th>Data de nascimento</th>
+                    <th>Responsável principal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for crianca in criancas %}
+                <tr>
+                    <td>
+                        <strong>{{ crianca.nome_completo }}</strong><br>
+                        <span class="text-muted small">{{ crianca.codigo_interno }}</span>
+                    </td>
+                    <td>{{ crianca.get_idade }} anos</td>
+                    <td>{{ crianca.data_nascimento|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if crianca.responsavel_principal_turma %}
+                            {{ crianca.responsavel_principal_turma.nome_completo }}
+                            {% if crianca.responsavel_principal_turma.telefone %}
+                                <br><span class="text-muted small">{{ crianca.responsavel_principal_turma.telefone }}</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted">Sem responsável vinculado</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        Nenhuma criança ativa nesta turma.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
