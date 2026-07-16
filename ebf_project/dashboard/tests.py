@@ -1,8 +1,12 @@
+from datetime import date
+
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from accounts.models import Perfil
+from criancas.models import Crianca
+from turmas.models import Turma
 
 
 class CriancasAtivasPermissaoTests(TestCase):
@@ -45,3 +49,27 @@ class CriancasAtivasPermissaoTests(TestCase):
         response = self.acessar_com_usuario(usuario)
 
         self.assertEqual(response.status_code, 403)
+
+    @override_settings(DEBUG=False, ALLOWED_HOSTS=['testserver'])
+    def test_criancas_ativas_com_paginacao_nao_gera_erro_500(self):
+        usuario = User.objects.create_user(username='coord_paginacao', password='senha123')
+        Perfil.objects.create(usuario=usuario, tipo_perfil='coordenacao', ativo=True)
+        turma = Turma.objects.create(
+            nome='Turma Paginada',
+            faixa_etaria='6 a 8 anos',
+            sala_local='Sala 1',
+            ativa=True,
+        )
+        for indice in range(25):
+            Crianca.objects.create(
+                nome_completo=f'Criança {indice:02d}',
+                data_nascimento=date(2018, 1, 1),
+                turma=turma,
+                ativa=True,
+            )
+
+        primeira_pagina = self.acessar_com_usuario(usuario)
+        ultima_pagina = self.client.get(reverse('dashboard:criancas_ativas'), {'page': 2})
+
+        self.assertEqual(primeira_pagina.status_code, 200)
+        self.assertEqual(ultima_pagina.status_code, 200)
