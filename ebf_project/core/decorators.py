@@ -1,5 +1,6 @@
 from functools import wraps
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 
 
@@ -18,18 +19,22 @@ def usuario_tem_responsavel(user):
 
 def perfil_requerido(tipos_permitidos):
     """
-    Decorator que verifica se o usuário tem um dos tipos de perfil permitidos.
+    Libera a view quando o usuário é superuser ou staff do Django, OU possui um
+    Perfil ativo cujo tipo está em tipos_permitidos (ex.: coordenacao, admin).
     """
     def decorator(view_func):
         @wraps(view_func)
         @login_required
         def wrapper(request, *args, **kwargs):
+            user = request.user
+            if user.is_superuser or user.is_staff:
+                return view_func(request, *args, **kwargs)
             try:
-                perfil = request.user.perfil
-                if perfil.ativo and perfil.tipo_perfil in tipos_permitidos:
-                    return view_func(request, *args, **kwargs)
-            except Exception:
-                pass
+                perfil = user.perfil
+            except ObjectDoesNotExist:
+                perfil = None
+            if perfil and perfil.ativo and perfil.tipo_perfil in tipos_permitidos:
+                return view_func(request, *args, **kwargs)
             return render_access_denied(request, 'Você não tem permissão para acessar esta página.')
         return wrapper
     return decorator
