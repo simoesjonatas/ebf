@@ -7,7 +7,7 @@ from django.db.models import Count, Q
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from datetime import date
-from core.decorators import coordenacao_requerida
+from core.decorators import coordenacao_requerida, perfil_requerido
 from core.utils import registrar_auditoria
 from criancas.models import Crianca
 from presencas.models import PresencaDiaria
@@ -152,7 +152,7 @@ def criancas_retiradas(request):
     })
 
 
-@coordenacao_requerida
+@perfil_requerido(['recepcao', 'checkin', 'checkout', 'professor', 'coordenacao', 'admin'])
 def criancas_ativas(request):
     """Lista todas as crianças ativas cadastradas, com filtro por nome/código
     e por turma, com paginação."""
