@@ -41,7 +41,7 @@ class CriancaForm(forms.ModelForm):
         choices=[('', 'Selecione...')] + PARENTESCO_CHOICES,
         required=False,
         widget=forms.Select(attrs={'class': 'form-select'}),
-        label='O que a criança é de você?'
+        label='O que você é para a criança?'
     )
 
     class Meta:

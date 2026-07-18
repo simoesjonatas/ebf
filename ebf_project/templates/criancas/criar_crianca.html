@@ -35,7 +35,7 @@
 
                     {% if not crianca %}
                     <div class="mb-3">
-                        <label class="form-label" for="{{ form.parentesco.id_for_label }}">O que a criança é de você? *</label>
+                        <label class="form-label" for="{{ form.parentesco.id_for_label }}">O que você é para a criança? *</label>
                         {{ form.parentesco }}
                         {% for error in form.parentesco.errors %}
                             <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
