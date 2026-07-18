@@ -28,11 +28,18 @@
             {% csrf_token %}
             <div class="card-header">Crianças para check-in</div>
             <div class="card-body">
-                <div class="list-group">
+                <div class="list-group crianca-selection-list">
                     {% for crianca in criancas %}
-                        <div class="list-group-item">
-                            <strong>{{ crianca.nome_completo }}</strong>
-                            <span class="text-muted d-block small">{{ crianca.codigo_interno }} · {% if crianca.turma %}{{ crianca.turma.nome }}{% else %}Sem turma{% endif %}</span>
+                        <div class="list-group-item crianca-selection-item">
+                            {% if crianca.foto %}
+                                <img src="{{ crianca.foto.url }}" alt="Foto de {{ crianca.nome_completo }}" class="crianca-selection-photo">
+                            {% else %}
+                                <span class="crianca-selection-photo crianca-selection-placeholder">Sem foto</span>
+                            {% endif %}
+                            <span class="crianca-selection-body">
+                                <span class="crianca-selection-name">{{ crianca.nome_completo }}</span>
+                                <span class="crianca-selection-meta">{{ crianca.codigo_interno }} · {% if crianca.turma %}{{ crianca.turma.nome }}{% else %}Sem turma{% endif %}</span>
+                            </span>
                         </div>
                     {% empty %}
                         <div class="empty-state">

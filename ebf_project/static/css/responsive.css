@@ -25,6 +25,22 @@
     /* Botões de ação ocupam a largura toda para facilitar o toque */
     .btn-block-mobile { width: 100%; }
 
+    .crianca-selection-item {
+        align-items: flex-start;
+        gap: var(--ebf-space-2);
+        padding: var(--ebf-space-2);
+    }
+    .crianca-selection-photo {
+        flex-basis: 52px;
+        width: 52px;
+    }
+    .crianca-selection-name {
+        font-size: .98rem;
+    }
+    .crianca-selection-meta {
+        font-size: .84rem;
+    }
+
     /* Reduz títulos grandes para caber na tela */
     h1, .h1 { font-size: 1.6rem; }
     h2, .h2 { font-size: 1.35rem; }

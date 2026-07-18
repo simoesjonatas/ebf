@@ -127,7 +127,7 @@ def checkin_responsavel(request, responsavel_id):
         crianca_responsavel__responsavel=responsavel,
         crianca_responsavel__pode_fazer_checkin=True,
         crianca_responsavel__ativo=True
-    ).distinct()
+    ).select_related('turma').distinct()
 
     # Crianças que já fizeram check-in hoje (presentes ou já retiradas):
     # não devem aparecer para novo check-in.
@@ -177,6 +177,7 @@ def checkin_responsavel(request, responsavel_id):
         'form': form,
         'responsavel': responsavel,
         'criancas_presentes': criancas_presentes,
+        'criancas_selecionadas_ids': request.POST.getlist('criancas') if request.method == 'POST' else [],
     }
     return render(request, 'presencas/checkin_responsavel.html', context)
 
@@ -199,7 +200,7 @@ def checkin_lote(request, lote_id):
         crianca_responsavel__pode_fazer_checkin=True,
         crianca_responsavel__ativo=True,
         ativa=True
-    ).distinct()
+    ).select_related('turma').distinct()
 
     hoje = date.today()
     # Crianças do lote que já fizeram check-in hoje (não entram de novo)
@@ -407,7 +408,7 @@ def checkout_lote(request, lote_id):
         ativa=True,
         presencas__data=hoje,
         presencas__status='PRESENTE'
-    ).distinct()
+    ).select_related('turma').distinct()
 
     # Crianças do lote que já saíram hoje (informativo)
     criancas_retiradas = lote.criancas.filter(
@@ -458,7 +459,7 @@ def checkout_responsavel(request, responsavel_id):
         crianca_responsavel__ativo=True,
         presencas__data=hoje,
         presencas__status='PRESENTE'
-    ).distinct()
+    ).select_related('turma').distinct()
 
     # Crianças deste responsável que JÁ saíram hoje (apenas informativo)
     criancas_retiradas = Crianca.objects.filter(
@@ -501,5 +502,6 @@ def checkout_responsavel(request, responsavel_id):
         'form': form,
         'responsavel': responsavel,
         'criancas_retiradas': criancas_retiradas,
+        'criancas_selecionadas_ids': request.POST.getlist('criancas') if request.method == 'POST' else [],
     }
     return render(request, 'presencas/checkout_responsavel.html', context)

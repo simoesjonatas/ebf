@@ -30,11 +30,25 @@
                                 <label class="form-check-label fw-semibold" for="selTodasCheckout">Selecionar todas</label>
                             </div>
                         </div>
-                        <div class="list-group mb-4">
-                            {% for choice in form.criancas %}
-                                <label class="list-group-item d-flex align-items-center gap-2">{{ choice.tag }} {{ choice.choice_label }}</label>
+                        <div class="list-group crianca-selection-list mb-4">
+                            {% for crianca in form.criancas.field.queryset %}
+                                <label class="list-group-item crianca-selection-item" for="checkout-crianca-{{ forloop.counter0 }}">
+                                    <input class="form-check-input crianca-selection-check" type="checkbox" name="{{ form.criancas.html_name }}" id="checkout-crianca-{{ forloop.counter0 }}" value="{{ crianca.pk }}" {% if crianca.pk|stringformat:"s" in criancas_selecionadas_ids %}checked{% endif %}>
+                                    {% if crianca.foto %}
+                                        <img src="{{ crianca.foto.url }}" alt="Foto de {{ crianca.nome_completo }}" class="crianca-selection-photo">
+                                    {% else %}
+                                        <span class="crianca-selection-photo crianca-selection-placeholder">Sem foto</span>
+                                    {% endif %}
+                                    <span class="crianca-selection-body">
+                                        <span class="crianca-selection-name">{{ crianca.nome_completo }}</span>
+                                        <span class="crianca-selection-meta">{{ crianca.codigo_interno }} · {% if crianca.turma %}{{ crianca.turma.nome }}{% else %}Sem turma{% endif %}</span>
+                                    </span>
+                                </label>
                             {% endfor %}
                         </div>
+                        {% if form.criancas.errors %}
+                            <div class="invalid-feedback d-block mb-3">{{ form.criancas.errors|striptags }}</div>
+                        {% endif %}
                         <div class="mb-4">
                             <label class="form-label" for="{{ form.observacao.id_for_label }}">Observação</label>
                             {{ form.observacao }}

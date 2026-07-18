@@ -12,7 +12,7 @@ class CheckinForm(forms.Form):
 
     def __init__(self, criancas_queryset=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if criancas_queryset:
+        if criancas_queryset is not None:
             self.fields['criancas'].queryset = criancas_queryset
 
 
@@ -31,7 +31,7 @@ class CheckoutForm(forms.Form):
 
     def __init__(self, criancas_queryset=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if criancas_queryset:
+        if criancas_queryset is not None:
             self.fields['criancas'].queryset = criancas_queryset
 
 
