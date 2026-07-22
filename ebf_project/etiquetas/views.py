@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from django.core.paginator import Paginator
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
@@ -96,6 +97,7 @@ def listar_etiquetas_dia(request):
         'etiquetas': page_obj.object_list,
         'data': hoje,
         'status': status,
+        'permitir_reverter_impressas': status == 'impressas',
         'page_obj': page_obj,
         'paginator': paginator,
         'total_etiquetas': etiquetas_base.count(),
@@ -126,6 +128,34 @@ def marcar_impressa(request, etiqueta_id):
         return redirect(proxima_url)
 
     return redirect('etiquetas:listar_etiquetas_dia')
+
+
+@recepcao_requerida
+@require_POST
+def marcar_nao_impressas_lote(request):
+    """Volta etiquetas impressas de hoje para pendentes."""
+    ids = request.POST.getlist('etiquetas')
+    validos = []
+    for i in ids:
+        try:
+            uuid.UUID(i)
+            validos.append(i)
+        except (ValueError, TypeError):
+            continue
+
+    hoje = date.today()
+    qs = Etiqueta.objects.filter(id__in=validos, presenca__data=hoje, impressa=True)
+    atualizadas = qs.update(impressa=False, data_impressao=None)
+
+    if atualizadas:
+        if atualizadas == 1:
+            messages.success(request, '1 etiqueta voltou para pendente.')
+        else:
+            messages.success(request, f'{atualizadas} etiquetas voltaram para pendentes.')
+        return redirect(f"{reverse('etiquetas:listar_etiquetas_dia')}?status=pendentes")
+
+    messages.info(request, 'Nenhuma etiqueta impressa foi selecionada.')
+    return redirect(f"{reverse('etiquetas:listar_etiquetas_dia')}?status=impressas")
 
 
 @recepcao_requerida

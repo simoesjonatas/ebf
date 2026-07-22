@@ -39,10 +39,27 @@
         </div>
     </div>
     <div class="card-body">
+        {% if permitir_reverter_impressas and etiquetas %}
+        <form method="post" action="{% url 'etiquetas:marcar_nao_impressas_lote' %}"
+              onsubmit="return confirm('Marcar as etiquetas selecionadas como pendentes? Elas poderão ser impressas em lote novamente.');">
+            {% csrf_token %}
+            <div class="alert alert-warning d-flex flex-wrap align-items-center gap-3 mb-3">
+                <div class="form-check m-0">
+                    <input class="form-check-input" type="checkbox" id="selTodasNaoImpressas">
+                    <label class="form-check-label fw-semibold" for="selTodasNaoImpressas">Selecionar todas desta página</label>
+                </div>
+                <button type="submit" class="btn btn-warning ms-lg-auto">
+                    <i class="bi bi-arrow-counterclockwise"></i> Marcar selecionadas como pendentes
+                </button>
+            </div>
+        {% endif %}
         <div class="table-responsive">
             <table class="table align-middle">
                 <thead>
                     <tr>
+                        {% if permitir_reverter_impressas %}
+                        <th class="text-center" style="width: 52px;">Sel.</th>
+                        {% endif %}
                         <th>Criança</th>
                         <th>Turma</th>
                         <th>Gerada em</th>
@@ -53,6 +70,13 @@
                 <tbody>
                     {% for etiqueta in etiquetas %}
                     <tr>
+                        {% if permitir_reverter_impressas %}
+                        <td class="text-center">
+                            <input class="form-check-input chk-nao-impressa" type="checkbox"
+                                   name="etiquetas" value="{{ etiqueta.id }}"
+                                   aria-label="Selecionar etiqueta de {{ etiqueta.crianca.nome_completo }}">
+                        </td>
+                        {% endif %}
                         <td><strong>{{ etiqueta.crianca.nome_completo }}</strong><br><small class="text-muted">{{ etiqueta.crianca.codigo_interno }}</small></td>
                         <td>{% if etiqueta.crianca.turma %}{{ etiqueta.crianca.turma.nome }}{% else %}-{% endif %}</td>
                         <td>{{ etiqueta.data_geracao|date:"H:i" }}</td>
@@ -66,7 +90,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">
+                        <td colspan="{% if permitir_reverter_impressas %}6{% else %}5{% endif %}" class="text-center text-muted py-4">
                             {% if status == 'pendentes' %}
                                 Nenhuma etiqueta pendente hoje.
                             {% elif status == 'impressas' %}
@@ -80,6 +104,9 @@
                 </tbody>
             </table>
         </div>
+        {% if permitir_reverter_impressas and etiquetas %}
+        </form>
+        {% endif %}
     </div>
     {% if page_obj.has_other_pages %}
     <div class="card-footer bg-white">
@@ -119,4 +146,19 @@
     </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{% if permitir_reverter_impressas %}
+<script>
+    (function () {
+        var selTodas = document.getElementById("selTodasNaoImpressas");
+        if (!selTodas) return;
+        var itens = document.querySelectorAll(".chk-nao-impressa");
+        selTodas.addEventListener("change", function () {
+            itens.forEach(function (chk) { chk.checked = selTodas.checked; });
+        });
+    })();
+</script>
+{% endif %}
 {% endblock %}

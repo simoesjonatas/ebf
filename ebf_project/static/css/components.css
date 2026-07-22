@@ -532,6 +532,27 @@ a.kpi-link:hover .kpi-link-arrow { transform: translateX(3px); color: var(--ebf-
     overflow-wrap: anywhere;
 }
 
+.dashboard-crianca-photo {
+    flex: 0 0 58px;
+    width: 58px;
+    height: 64px;
+    border: 1px solid var(--ebf-border);
+    border-radius: var(--ebf-radius-sm);
+    object-fit: cover;
+    background: var(--ebf-surface-2);
+    box-shadow: var(--ebf-shadow-xs);
+}
+
+.dashboard-crianca-photo-placeholder {
+    display: grid;
+    place-items: center;
+    color: var(--ebf-muted);
+    font-size: var(--ebf-fs-xs);
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+}
+
 /* ---- Dropdown (menu do usuário) ---------------------------------------- */
 .dropdown-menu {
     border: 1px solid var(--ebf-border);
